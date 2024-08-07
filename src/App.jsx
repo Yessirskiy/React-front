@@ -8,16 +8,16 @@ import {
   AppstoreOutlined,
   FormOutlined,
 } from '@ant-design/icons';
-import { Avatar, Button, Layout, Menu, theme } from 'antd';
-import { Breadcrumb } from 'antd';
-import UserSidbar from './components/UserSidebar';
+import { Avatar, Button, Layout, Menu, theme, Flex, Breadcrumb } from 'antd';
 
 const { Header, Sider, Content } = Layout;
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [selectedNav, setSelectedNav] = useState("meetings_new")
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
   return (
     <Layout className='h-screen'>
       <Sider trigger={null} collapsible collapsed={collapsed} theme='light'>
@@ -90,6 +90,7 @@ const App = () => {
       </Sider>
       <Layout>
         <Header
+          className='flex items-center gap-3'
           style={{
             padding: 0,
             background: colorBgContainer,
@@ -105,6 +106,10 @@ const App = () => {
               height: 64,
             }}
           />
+          <Breadcrumb>
+            <Breadcrumb.Item>User</Breadcrumb.Item>
+            <Breadcrumb.Item>Bill</Breadcrumb.Item>
+          </Breadcrumb>
         </Header>
         <Content
           style={{
