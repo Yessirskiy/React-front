@@ -23,10 +23,10 @@ const App = () => {
   const themeConfig = {
     algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
     token: {
-      colorPrimary: isDarkMode ? '#1890ff' : '#2e79ea',//'#1a8cff', // #1DA57A
-      colorBgLayout: isDarkMode ? '#001529' : '#f0f2f5',
-      colorTextBase: isDarkMode ? '#ffffff' : '#000000',
-      colorBgContainer: isDarkMode ? '#141414' : '#ffffff',
+      colorPrimary: isDarkMode ? '#76ABAE' : '#4D869C',//'#1890ff', // #1DA57A
+      colorBgLayout: isDarkMode ? '#31363F' : '#F7F9FB', //'#001529' : '#f0f2f5',
+      colorTextBase: isDarkMode ? '#EEEEEE' : '#000000',
+      colorBgContainer: isDarkMode ? '#222831' : '#EEF7FF', //'#141414' : '#ffffff', 
       borderRadiusSM: "2px",
       borderRadius: "8px",
       borderRadiusLG: "8px",
