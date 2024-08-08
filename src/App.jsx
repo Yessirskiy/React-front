@@ -5,16 +5,33 @@ import {
   UserOutlined,
   AppstoreOutlined,
   FormOutlined,
+  SunOutlined,
+  MoonOutlined,
 } from '@ant-design/icons';
-import { Avatar, Button, Layout, Menu, theme, Breadcrumb } from 'antd';
+import { Avatar, Button, Layout, Menu, Breadcrumb, theme, ConfigProvider } from 'antd';
+import UserProfile from "./pages/UserProfile.jsx"
 
 const { Header, Sider, Content } = Layout;
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedNav, setSelectedNav] = useState("meetings_new")
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+  const themeConfig = {
+    algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
+    token: {
+      colorPrimary: isDarkMode ? '#1890ff' : '#1DA57A',
+      colorBgLayout: isDarkMode ? '#001529' : '#f0f2f5',
+      colorTextBase: isDarkMode ? '#ffffff' : '#000000',
+      colorBgContainer: isDarkMode ? '#141414' : '#ffffff',
+      borderRadiusSM: "2px",
+      borderRadius: "4px",
+      borderRadiusLG: "8px",
+    },
+  };
 
   const menuItems = [
     {
@@ -65,13 +82,12 @@ const App = () => {
       ],
     },
   ]
-  const getBreadcumpItems = () => {
+  const getBreadcrumbItems = () => {
     let navs = selectedNav.split("_");
     for (let group of menuItems){
       for (let subgroup of group.children){
         if (subgroup.key === navs[0]){
           for (let groupelem of subgroup.children) {
-            console.log(selectedNav, navs[1])
             if (selectedNav === groupelem.key) {
               return [{title: subgroup.label}, {title: groupelem.label}];
             }
@@ -81,6 +97,8 @@ const App = () => {
     }
     return [];
   }
+
+  
 
 
   const onMenuClick = (e) => {
@@ -94,69 +112,64 @@ const App = () => {
         return <Tab2 />;
       case 'meetings_attended':
         return <Tab3 />;
+      case 'user_profile':
+        return <UserProfile colorBgContainer='#ffffff' borderRadiusLG={themeConfig.borderRadiusLG}/>;
       default:
         return <Tab1 />;
     }
   };
 
-
   return (
-    <Layout className='h-screen'>
-      <Sider trigger={null} collapsible collapsed={collapsed} theme='light'>
-        
-        <div className="demo-logo-vertical flex items-center gap-2" collapsible collapsed={collapsed}
-        style={{
-          height: '32px',
-          margin: '16px',
-          background: 'rgba(255,255,255,.2)',
-          borderRadius: borderRadiusLG,
-        }}>
-          <Avatar shape="square" icon={<UserOutlined />} />
-          Nikolai
-        </div>
-        <Menu
-          theme="light"
-          mode="inline"
-          onClick={onMenuClick}
-          defaultSelectedKeys={['1']}
-          style={{ margin: 0 }}
-          items={menuItems}
-        />
-      </Sider>
-      <Layout>
-        <Header
-          className='flex items-center gap-3'
+    <ConfigProvider theme={themeConfig}>
+      <Layout className='h-screen'>
+        <Sider trigger={null} collapsible collapsed={collapsed} style={{background: themeConfig.token.colorBgContainer}}>
+          <div className="demo-logo-vertical flex items-center gap-2" collapsible collapsed={collapsed}
           style={{
-            padding: 0,
-            background: colorBgContainer,
-          }}
-        >
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: '16px',
-              width: 64,
-              height: 64,
-            }}
+            height: '32px',
+            margin: '16px',
+            background: isDarkMode ? 'rgba(255,255,255,.2)' : 'rgba(0,0,0,.2)',
+            borderRadius: themeConfig.token.borderRadius,
+          }}>
+            <Avatar shape="square" icon={<UserOutlined />} />
+            Nikolai
+          </div>
+          <Menu className='m-0' mode="inline"
+            onClick={onMenuClick}
+            defaultSelectedKeys={['meetings_new']}
+            items={menuItems}
           />
-          <Breadcrumb items={getBreadcumpItems()}>
-          </Breadcrumb>
-        </Header>
-        <Content
-          style={{
-            margin: '24px 16px',
-            padding: 24,
-            minHeight: 280,
-            background: colorBgContainer,
-            borderRadius: borderRadiusLG,
-          }}
-        >
-          {renderContent()}
-        </Content>
+        </Sider>
+        <Layout>
+          <Header className='flex items-center gap-3 p-0' style={{background: themeConfig.token.colorBgContainer}}>
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setCollapsed(!collapsed)}
+              style={{
+                fontSize: '16px',
+                width: 64,
+                height: 64,
+              }}
+            />
+            <Breadcrumb items={getBreadcrumbItems()}>
+            </Breadcrumb>
+            <Button
+              type="text"
+              icon={isDarkMode ? <MoonOutlined /> : <SunOutlined />}
+              onClick={toggleTheme}
+              style={{
+                fontSize: '16px',
+                width: 64,
+                height: 64,
+              }}
+            />
+          </Header>
+          <Content className='m-7'>
+            {renderContent()}
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </ConfigProvider>
   );
 };
 
