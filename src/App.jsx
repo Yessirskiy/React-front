@@ -161,7 +161,9 @@ const App = () => {
               }}
             />
           </Header>
-          <Content className='m-7'>
+          <Content 
+            className='m-7 mb-0 h-screen overflow-scroll no-scrollbar'
+          >
             {renderContent()}
           </Content>
         </Layout>
