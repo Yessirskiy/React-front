@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  UploadOutlined,
   UserOutlined,
-  VideoCameraOutlined,
   AppstoreOutlined,
   FormOutlined,
 } from '@ant-design/icons';
-import { Avatar, Button, Layout, Menu, theme, Flex, Breadcrumb } from 'antd';
+import { Avatar, Button, Layout, Menu, theme, Breadcrumb } from 'antd';
 
 const { Header, Sider, Content } = Layout;
 const App = () => {
@@ -17,6 +15,90 @@ const App = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const menuItems = [
+    {
+      key: 'general',
+      label: 'Главное',
+      type: 'group',
+      children: [
+        {
+          key: 'meetings',
+          label: 'Встречи',
+          icon: <AppstoreOutlined />,
+          children: [
+            { key: 'meetings_new', label: 'Новые' },
+            { key: 'meetings_schedule', label: 'Мое расписание' },
+            { key: 'meetings_attended', label: 'Посещенные' },
+            { key: 'meetings_help', label: 'Помощь' },
+          ]
+        },
+        {
+          key: 'blog',
+          label: 'Блог',
+          icon: <FormOutlined />,
+          children: [
+            { key: 'blog_feed', label: 'Актуальное' },
+            { key: 'blog_blogs', label: 'Мои блоги' },
+            { key: 'blog_articles', label: 'Мои статьи' },
+            { key: 'blog_help', label: 'Помощь' },
+          ]
+        },
+      ],
+    },
+    {
+      key: 'settings',
+      label: 'Пользовательское',
+      type: 'group',
+      children: [
+        {
+          key: 'user',
+          label: 'Аккаунт',
+          icon: <UserOutlined />,
+          children: [
+            { key: 'user_profile', label: 'Профиль' },
+            { key: 'user_balance', label: 'Баланс' },
+            { key: 'user_settings', label: 'Настройки' },
+            { key: 'user_help', label: 'Помощь' },
+          ]
+        },
+      ],
+    },
+  ]
+  const getBreadcumpItems = () => {
+    let navs = selectedNav.split("_");
+    for (let group of menuItems){
+      for (let subgroup of group.children){
+        if (subgroup.key === navs[0]){
+          for (let groupelem of subgroup.children) {
+            console.log(selectedNav, navs[1])
+            if (selectedNav === groupelem.key) {
+              return [{title: subgroup.label}, {title: groupelem.label}];
+            }
+          }
+        }
+      }
+    }
+    return [];
+  }
+
+
+  const onMenuClick = (e) => {
+    setSelectedNav(e.key);
+  };
+  const renderContent = () => {
+    switch (selectedNav) {
+      case 'meetings_new':
+        return <Tab1 />;
+      case 'meetings_schedule':
+        return <Tab2 />;
+      case 'meetings_attended':
+        return <Tab3 />;
+      default:
+        return <Tab1 />;
+    }
+  };
+
 
   return (
     <Layout className='h-screen'>
@@ -35,57 +117,10 @@ const App = () => {
         <Menu
           theme="light"
           mode="inline"
+          onClick={onMenuClick}
           defaultSelectedKeys={['1']}
           style={{ margin: 0 }}
-          items={[
-            {
-              key: 'general',
-              label: 'Главное',
-              type: 'group',
-              children: [
-                {
-                  key: 'meetings',
-                  label: 'Встречи',
-                  icon: <AppstoreOutlined />,
-                  children: [
-                    { key: 'meetings_new', label: 'Новые' },
-                    { key: 'meetings_schedule', label: 'Мое расписание' },
-                    { key: 'meetings_attended', label: 'Посещенные' },
-                    { key: 'meetings_help', label: 'Помощь' },
-                  ]
-                },
-                {
-                  key: 'blog',
-                  label: 'Блог',
-                  icon: <FormOutlined />,
-                  children: [
-                    { key: 'blog_feed', label: 'Актуальное' },
-                    { key: 'blog_blogs', label: 'Мои блоги' },
-                    { key: 'blog_articles', label: 'Мои статьи' },
-                    { key: 'blog_help', label: 'Помощь' },
-                  ]
-                },
-              ],
-            },
-            {
-              key: 'settings',
-              label: 'Пользовательское',
-              type: 'group',
-              children: [
-                {
-                  key: 'user',
-                  label: 'Аккаунт',
-                  icon: <UserOutlined />,
-                  children: [
-                    { key: 'settings_profile', label: 'Профиль' },
-                    { key: 'settings_balance', label: 'Баланс' },
-                    { key: 'settings_settings', label: 'Настройки' },
-                    { key: 'settings_help', label: 'Помощь' },
-                  ]
-                },
-              ],
-            },
-          ]}
+          items={menuItems}
         />
       </Sider>
       <Layout>
@@ -106,9 +141,7 @@ const App = () => {
               height: 64,
             }}
           />
-          <Breadcrumb>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
+          <Breadcrumb items={getBreadcumpItems()}>
           </Breadcrumb>
         </Header>
         <Content
@@ -120,10 +153,15 @@ const App = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          Content
+          {renderContent()}
         </Content>
       </Layout>
     </Layout>
   );
 };
+
+const Tab1 = () => <div>Content of Tab 1</div>;
+const Tab2 = () => <div>Content of Tab 2</div>;
+const Tab3 = () => <div>Content of Tab 3</div>;
+
 export default App;
