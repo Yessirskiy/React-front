@@ -23,12 +23,12 @@ const App = () => {
   const themeConfig = {
     algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
     token: {
-      colorPrimary: isDarkMode ? '#1890ff' : '#1DA57A',
+      colorPrimary: isDarkMode ? '#1890ff' : '#2e79ea',//'#1a8cff', // #1DA57A
       colorBgLayout: isDarkMode ? '#001529' : '#f0f2f5',
       colorTextBase: isDarkMode ? '#ffffff' : '#000000',
       colorBgContainer: isDarkMode ? '#141414' : '#ffffff',
       borderRadiusSM: "2px",
-      borderRadius: "4px",
+      borderRadius: "8px",
       borderRadiusLG: "8px",
     },
   };
@@ -98,9 +98,6 @@ const App = () => {
     return [];
   }
 
-  
-
-
   const onMenuClick = (e) => {
     setSelectedNav(e.key);
   };
@@ -113,7 +110,7 @@ const App = () => {
       case 'meetings_attended':
         return <Tab3 />;
       case 'user_profile':
-        return <UserProfile colorBgContainer='#ffffff' borderRadiusLG={themeConfig.borderRadiusLG}/>;
+        return <UserProfile themeConfig={themeConfig} colorBgContainer='#ffffff' borderRadiusLG={themeConfig.borderRadiusLG}/>;
       default:
         return <Tab1 />;
     }
