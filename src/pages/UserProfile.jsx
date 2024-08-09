@@ -1,10 +1,13 @@
 import React from 'react';
-import { Space, Button, Form, Input, Upload, Image, Avatar, ConfigProvider } from 'antd';
+import { Space, ConfigProvider } from 'antd';
+import { Form, Input, Upload, Button, Switch, Image} from 'antd';
 import {Row, Col, Divider} from 'antd';
 import { UserOutlined, UploadOutlined } from '@ant-design/icons';
 
 const ProfileForm = ({themeConfig}) => {
-  const [form] = Form.useForm();
+  const [changeProfileForm] = Form.useForm();
+  const [changePasswordForm] = Form.useForm();
+  const [changeAuthSettingsForm] = Form.useForm();
 
   const onFinish = (values) => {
     console.log('Form values: ', values);
@@ -19,18 +22,19 @@ const ProfileForm = ({themeConfig}) => {
   return (
     <ConfigProvider theme={themeConfig}>      
         <Space className='flex' direction='vertical' size="large">
+            <Divider orientation="left">Профиль</Divider>
             <div className="p-6" 
                 style={{ 
                 borderRadius: themeConfig.token.borderRadiusLG,
                 backgroundColor: themeConfig.token.colorBgContainer 
             }}>
-                <h2 className='mb-4 text-base'>Профиль</h2>
                 <Form
-                    form={form}
+                    form={changeProfileForm}
                     layout="vertical"
                     onFinish={onFinish}
                     className="flex"
                     style={{alignItems: 'flex-start', backgroundColor: themeConfig.token.colorBgContainer }}
+                    variant='filled'
                 >
                     <div className="mr-8 text-center">
                         <Image
@@ -54,7 +58,7 @@ const ProfileForm = ({themeConfig}) => {
                             name="firstName"
                             rules={[{ required: true, message: 'Введите ваше имя' }]}
                         >
-                            <Input placeholder="Введите ваше имя" className="h-10"/>
+                            <Input placeholder="Введите ваше имя" size='large'/>
                         </Form.Item>
 
                         <Form.Item
@@ -62,7 +66,7 @@ const ProfileForm = ({themeConfig}) => {
                             name="lastName"
                             rules={[{ message: 'Введите вашу фамилию' }]}
                         >
-                            <Input placeholder="Введите вашу фамилию" className="h-10" />
+                            <Input placeholder="Введите вашу фамилию" size='large' />
                         </Form.Item>
 
                         <Form.Item
@@ -71,7 +75,7 @@ const ProfileForm = ({themeConfig}) => {
                             rules={[{required: true, message: 'Введите вашу почту'}]}
                             initialValue="admin@example.com"
                         >
-                            <Input className="h-10"/>
+                            <Input size='large'/>
                         </Form.Item>
 
                         <Form.Item
@@ -79,12 +83,12 @@ const ProfileForm = ({themeConfig}) => {
                             name="phone"
                             rules={[{ message: 'Введите номер телефона' }]}
                         >
-                            <Input placeholder="Введите номер телефона" className="h-10"/>
+                            <Input placeholder="Введите номер телефона" size='large'/>
                         </Form.Item>
 
                         <Form.Item className="m-0">
                             <div  style={{ textAlign: 'right' }}>
-                            <Button type="primary" htmlType="submit" className="h-10">
+                            <Button type="primary" htmlType="submit" size='large'>
                                 Сохранить
                             </Button>
                             </div>
@@ -103,43 +107,53 @@ const ProfileForm = ({themeConfig}) => {
             >
                 <Col className='gutter-row' span={12}>
                     <Form
-                        form={form}
+                        form={changePasswordForm}
                         layout="vertical"
                         onFinish={onFinish}
                         style={cardStyling}
+                        variant='filled'
                     >
                         <div style={{ flex: 1 }}>
                             <Form.Item
-                                label="Имя"
-                                name="firstName"
-                                rules={[{ required: true, message: 'Введите ваше имя' }]}
+                                name="old_password"
+                                label="Старый пароль"
+                                rules={[
+                                {
+                                    required: true,
+                                    message: 'Введите старый пароль.',
+                                },
+                                ]}
+                                hasFeedback
                             >
-                                <Input placeholder="Введите ваше имя" className="h-10"/>
+                                <Input.Password placeholder='Введите старый пароль' size='large'/>
                             </Form.Item>
 
                             <Form.Item
-                                label="Фамилия"
-                                name="lastName"
-                                rules={[{ message: 'Введите вашу фамилию' }]}
+                                name="password1"
+                                label="Новый пароль"
+                                rules={[
+                                {
+                                    required: true,
+                                    message: 'Введите новый пароль.',
+                                },
+                                ]}
+                                hasFeedback
                             >
-                                <Input placeholder="Введите вашу фамилию" className="h-10" />
+                                <Input.Password placeholder='Введите новый пароль' size='large'/>
                             </Form.Item>
 
                             <Form.Item
-                                label="Почта"
-                                name="email"
-                                rules={[{required: true, message: 'Введите вашу почту'}]}
-                                initialValue="admin@example.com"
+                                name="password2"
+                                label="Новый пароль (подтверждение)"
+                                rules={[
+                                {
+                                    required: true,
+                                    message: 'Введите новый пароль (подтверждение).',
+                                },
+                                ]}
+                                hasFeedback
                             >
-                                <Input className="h-10"/>
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Номер телефона"
-                                name="phone"
-                                rules={[{ message: 'Введите номер телефона' }]}
-                            >
-                                <Input placeholder="Введите номер телефона" className="h-10"/>
+                                <Input.Password placeholder='Введите новый пароль (подтверждение)' size='large'/>
                             </Form.Item>
 
                             <Form.Item className="m-0">
@@ -154,43 +168,35 @@ const ProfileForm = ({themeConfig}) => {
                 </Col>
                 <Col className='gutter-row' span={12}>
                     <Form
-                        form={form}
+                        form={changeAuthSettingsForm}
                         layout="vertical"
                         onFinish={onFinish}
                         style={cardStyling}
+                        variant='filled'
                     >
                         <div style={{ flex: 1 }}>
                             <Form.Item
-                                label="Имя"
-                                name="firstName"
-                                rules={[{ required: true, message: 'Введите ваше имя' }]}
+                                label="Получать уведомления о входе"
+                                name="notify_login"
+                                layout='horizontal'
+                                valuePropName="checked"
                             >
-                                <Input placeholder="Введите ваше имя" className="h-10"/>
+                                <div className='text-right'>
+                                    <Switch ></Switch>
+                                </div>
+                                
                             </Form.Item>
 
                             <Form.Item
-                                label="Фамилия"
-                                name="lastName"
-                                rules={[{ message: 'Введите вашу фамилию' }]}
+                                label="Двухфакторная аутентификация"
+                                name="2fa_login"
+                                layout='horizontal'
+                                valuePropName="checked"
                             >
-                                <Input placeholder="Введите вашу фамилию" className="h-10" />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Почта"
-                                name="email"
-                                rules={[{required: true, message: 'Введите вашу почту'}]}
-                                initialValue="admin@example.com"
-                            >
-                                <Input className="h-10"/>
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Номер телефона"
-                                name="phone"
-                                rules={[{ message: 'Введите номер телефона' }]}
-                            >
-                                <Input placeholder="Введите номер телефона" className="h-10"/>
+                                <div className='text-right'>
+                                    <Switch ></Switch>
+                                </div>
+                                
                             </Form.Item>
 
                             <Form.Item className="m-0">

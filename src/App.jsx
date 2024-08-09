@@ -23,10 +23,14 @@ const App = () => {
   const themeConfig = {
     algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
     token: {
-      colorPrimary: isDarkMode ? '#76ABAE' : '#4D869C',//'#1890ff', // #1DA57A
-      colorBgLayout: isDarkMode ? '#31363F' : '#EEF7FF', //'#001529' : '#f0f2f5',
+      colorPrimary: isDarkMode ? '#1677ff' : '#1677ff',
+      // colorPrimary: isDarkMode ? '#76ABAE' : '#4D869C',
+      colorBgLayout: isDarkMode ? '#31363F' : '#f5f5f5',
+      // colorBgLayout: isDarkMode ? '#31363F' : '#EEF7FF',
       colorTextBase: isDarkMode ? '#EEEEEE' : '#000000',
-      colorBgContainer: isDarkMode ? '#222831' : '#F7F9FB', //'#141414' : '#ffffff', 
+      // colorTextBase: isDarkMode ? '#EEEEEE' : '#000000',
+      colorBgContainer: isDarkMode ? '#222831' : '#ffffff', 
+      // colorBgContainer: isDarkMode ? '#222831' : '#F7F9FB', 
       borderRadiusSM: "2px",
       borderRadius: "8px",
       borderRadiusLG: "8px",
