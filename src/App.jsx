@@ -24,9 +24,9 @@ const App = () => {
     algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
     token: {
       colorPrimary: isDarkMode ? '#76ABAE' : '#4D869C',//'#1890ff', // #1DA57A
-      colorBgLayout: isDarkMode ? '#31363F' : '#F7F9FB', //'#001529' : '#f0f2f5',
+      colorBgLayout: isDarkMode ? '#31363F' : '#EEF7FF', //'#001529' : '#f0f2f5',
       colorTextBase: isDarkMode ? '#EEEEEE' : '#000000',
-      colorBgContainer: isDarkMode ? '#222831' : '#EEF7FF', //'#141414' : '#ffffff', 
+      colorBgContainer: isDarkMode ? '#222831' : '#F7F9FB', //'#141414' : '#ffffff', 
       borderRadiusSM: "2px",
       borderRadius: "8px",
       borderRadiusLG: "8px",
@@ -120,15 +120,18 @@ const App = () => {
     <ConfigProvider theme={themeConfig}>
       <Layout className='h-screen'>
         <Sider trigger={null} collapsible collapsed={collapsed} style={{background: themeConfig.token.colorBgContainer}}>
-          <div className="demo-logo-vertical flex items-center gap-2" collapsible collapsed={collapsed}
-          style={{
-            height: '32px',
-            margin: '16px',
-            background: isDarkMode ? 'rgba(255,255,255,.2)' : 'rgba(0,0,0,.2)',
-            borderRadius: themeConfig.token.borderRadius,
-          }}>
-            <Avatar shape="square" icon={<UserOutlined />} />
-            Nikolai
+          <div 
+            className="demo-logo-vertical flex items-center gap-2" 
+            collapsible collapsed={collapsed}
+            style={{
+              height: '32px',
+              margin: '16px',
+              // background: isDarkMode ? 'rgba(255,255,255,.2)' : 'rgba(0,0,0,.2)',
+              borderRadius: themeConfig.token.borderRadius,
+            }}
+          >
+            {/* <Avatar shape="square" icon={<UserOutlined />} />
+            Nikolai */}
           </div>
           <Menu className='m-0' mode="inline"
             onClick={onMenuClick}
