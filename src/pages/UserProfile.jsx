@@ -32,11 +32,11 @@ const ProfileForm = ({themeConfig}) => {
                     form={changeProfileForm}
                     layout="vertical"
                     onFinish={onFinish}
-                    className="flex"
-                    style={{alignItems: 'flex-start', backgroundColor: themeConfig.token.colorBgContainer }}
+                    style={{backgroundColor: themeConfig.token.colorBgContainer }}
                     variant='filled'
                 >
-                    <div className="mr-8 text-center">
+                    <Row>
+                    <Col className="mr-8 text-center">
                         <Image
                             width={200}
                             src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
@@ -51,8 +51,8 @@ const ProfileForm = ({themeConfig}) => {
                             </Button>
                             </Upload>
                         </Form.Item>
-                    </div>
-                    <div style={{ flex: 1 }}>
+                    </Col>
+                    <Col style={{ flex: 1 }}>
                         <Form.Item
                             label="Имя"
                             name="firstName"
@@ -93,19 +93,18 @@ const ProfileForm = ({themeConfig}) => {
                             </Button>
                             </div>
                         </Form.Item>
-                    </div>
+                    </Col>
+                    </Row>
                 </Form>
             </div>
             <Divider orientation="left">Аутентификация</Divider>
             <Row 
-            gutter={{
-                xs: 8,
-                sm: 16,
-                md: 24,
-                lg: 32,
-              }}
+            gutter={[28, 28]}
             >
-                <Col className='gutter-row' span={12}>
+                <Col 
+                className='gutter-row'
+                xs={24} sm={24} md={24}
+                lg={12} xl={12}>
                     <Form
                         form={changePasswordForm}
                         layout="vertical"
@@ -166,7 +165,10 @@ const ProfileForm = ({themeConfig}) => {
                         </div>
                     </Form>
                 </Col>
-                <Col className='gutter-row' span={12}>
+                <Col 
+                className='gutter-row'
+                xs={24} sm={24} md={24}
+                lg={12} xl={12}>
                     <Form
                         form={changeAuthSettingsForm}
                         layout="vertical"
