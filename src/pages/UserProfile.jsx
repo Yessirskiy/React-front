@@ -1,6 +1,8 @@
 import React from 'react';
+import {useState} from 'react';
+
 import { Space, ConfigProvider } from 'antd';
-import { Form, Input, Upload, Button, Switch, Image} from 'antd';
+import { Form, Input, Upload, Button, Switch, Image, Modal, Popconfirm} from 'antd';
 import {Row, Col, Divider} from 'antd';
 import { UserOutlined, UploadOutlined } from '@ant-design/icons';
 
@@ -8,6 +10,8 @@ const ProfileForm = ({themeConfig}) => {
   const [changeProfileForm] = Form.useForm();
   const [changePasswordForm] = Form.useForm();
   const [changeAuthSettingsForm] = Form.useForm();
+
+  const [showLogin2FA, setShowLogin2FA] = useState(false);
 
   const onFinish = (values) => {
     console.log('Form values: ', values);
@@ -18,6 +22,36 @@ const ProfileForm = ({themeConfig}) => {
     backgroundColor: themeConfig.token.colorBgContainer,
     borderRadius: themeConfig.token.borderRadiusLG,
   };
+
+  const onTwofaChange = (checked) => {
+    setShowLogin2FA(checked);
+    if (checked)
+        showLoading();
+  };
+
+  const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
+
+  const showLoading = () => {
+    setOpen(true);
+    setLoading(true);
+
+    setTimeout(() => {
+    setLoading(false);
+    }, 2000);
+  }
+
+  const handleOk = () => {
+    setOpen(false);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
+  const text = 'Отключение двухфакторной аутентификации ослабит безопасность.';
+  const description = 'Отключить?';
+  const buttonWidth = 80;
 
   return (
     <ConfigProvider theme={themeConfig}>      
@@ -90,7 +124,7 @@ const ProfileForm = ({themeConfig}) => {
                                 name="phone"
                                 rules={[{ message: 'Введите номер телефона' }]}
                             >
-                                <Input placeholder="Введите номер телефона" size='large'/>
+                                <Input addonBefore="+7" placeholder="Введите номер телефона" size='large'/>
                             </Form.Item>
 
                             <Form.Item className="m-0">
@@ -107,6 +141,7 @@ const ProfileForm = ({themeConfig}) => {
             <Divider orientation="left">Аутентификация</Divider>
             <Row 
             gutter={[28, 28]}
+            className="mb-7"
             >
                 <Col 
                 className='gutter-row'
@@ -203,10 +238,23 @@ const ProfileForm = ({themeConfig}) => {
                                 valuePropName="checked"
                             >
                                 <div className='text-right'>
-                                    <Switch ></Switch>
+                                    <Switch onChange={onTwofaChange}></Switch>
                                 </div>
                                 
                             </Form.Item>
+                            <Modal
+                                title={<p>Настройка двухфакторной аутентификации</p>}
+                                loading={loading}
+                                open={open}
+                                onCancel={handleCancel}
+                                cancelText='Отмена'
+                                onOk={handleOk}
+                                okText='Подтвердить'
+                            >
+                                <p>Some contents...</p>
+                                <p>Some contents...</p>
+                                <p>Some contents...</p>
+                            </Modal>
 
                             <Form.Item className="m-0">
                                 <div  style={{ textAlign: 'right' }}>
