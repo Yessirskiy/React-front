@@ -32,8 +32,8 @@ const App = () => {
       // colorTextBase: isDarkMode ? '#EEEEEE' : '#000000',
       colorBgContainer: isDarkMode ? '#222831' : '#ffffff', 
       // colorBgContainer: isDarkMode ? '#222831' : '#F7F9FB', 
-      borderRadiusSM: "2px",
-      borderRadius: "8px",
+      borderRadiusSM: "4px",
+      borderRadius: "6px",
       borderRadiusLG: "8px",
     },
   };
