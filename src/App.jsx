@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import { Avatar, Button, Layout, Menu, Breadcrumb, theme, ConfigProvider } from 'antd';
 import UserProfile from "./pages/UserProfile.jsx"
+import UserSettings from "./pages/UserSettings.jsx"
 
 const { Header, Sider, Content } = Layout;
 const App = () => {
@@ -114,7 +115,9 @@ const App = () => {
       case 'meetings_attended':
         return <Tab3 />;
       case 'user_profile':
-        return <UserProfile themeConfig={themeConfig} colorBgContainer='#ffffff' borderRadiusLG={themeConfig.borderRadiusLG}/>;
+        return <UserProfile themeConfig={themeConfig}/>;
+      case 'user_settings':
+        return <UserSettings themeConfig={themeConfig}/>;
       default:
         return <Tab1 />;
     }
