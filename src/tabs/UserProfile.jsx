@@ -1,18 +1,28 @@
 import React from 'react';
-import {useState} from 'react';
+import { useState, useEffect } from 'react';
 
-import { Space, ConfigProvider } from 'antd';
+import { Space, ConfigProvider, message } from 'antd';
 import { Form, Input, Upload, Button, Switch, Image, Modal, DatePicker, Select} from 'antd';
 import {Row, Col, Divider} from 'antd';
 import { UserOutlined, UploadOutlined } from '@ant-design/icons';
+import useAxios from '../utils/UseAxios';
+
+const profileURL = "api/users/profile/";
 
 const ProfileForm = ({themeConfig}) => {
   const [changeProfileForm] = Form.useForm();
+  const [loadings, setLoadings] = useState([]);
   const [changeAdditionalForm] = Form.useForm();
   const [changePasswordForm] = Form.useForm();
   const [changeAuthSettingsForm] = Form.useForm();
 
   const [showLogin2FA, setShowLogin2FA] = useState(false);
+  
+  const [messageApi, contextHolder] = message.useMessage();
+  const [notification, setNotification] = useState(null);
+  const [error, setError] = useState(null)
+
+  let api = useAxios();
 
   const onFinish = (values) => {
     console.log('Form values: ', values);
@@ -40,7 +50,7 @@ const ProfileForm = ({themeConfig}) => {
     setTimeout(() => {
     setLoading(false);
     }, 2000);
-  }
+  };
 
   const handleOk = () => {
     setOpen(false);
@@ -49,6 +59,60 @@ const ProfileForm = ({themeConfig}) => {
   const handleCancel = () => {
     setOpen(false);
   };
+
+  const getProfile = async () => {
+    let response = await api.get(profileURL);
+    if (response.status === 200){
+        changeProfileForm.setFieldsValue(response.data);
+    }
+  };
+
+  useEffect(() => {
+    getProfile();
+  }, []);
+
+  const handleProfileSubmit = async (e) => {
+    try {
+        const payload = {
+            email: e.email,
+            first_name: e.first_name,
+            last_name: e.last_name ? e.last_name : null,
+        };
+
+        const response = await api.put(profileURL, payload, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (response.status === 200) {
+            changeProfileForm.setFieldsValue(response.data);
+        }
+        setNotification({
+            type: 'success',
+            content: 'Данные профиля обновлены.',
+        });
+    } catch (error) {
+        setError({
+            type: 'error',
+            content: 'Ошибка обновления профиля.',
+        });
+    }
+  }
+
+  useEffect(() => {
+    if (notification) {
+      messageApi.open(notification);
+      setNotification(null);
+    }
+  }, [notification, messageApi]);
+
+  useEffect(() => {
+    if (error) {
+      messageApi.open(error);
+      setError(null);
+    }
+  }, [error, messageApi]);
 
   const langLevels = [
     {
@@ -70,9 +134,11 @@ const ProfileForm = ({themeConfig}) => {
     },
   ];
 
+
   return (
     <ConfigProvider theme={themeConfig}>      
         <Space className='flex' direction='vertical' size="large">
+            {contextHolder}
             <Divider orientation="left">Профиль</Divider>
             <Row 
                 gutter={[28, 28]}
@@ -85,7 +151,7 @@ const ProfileForm = ({themeConfig}) => {
                     <Form
                         form={changeProfileForm}
                         layout="vertical"
-                        onFinish={onFinish}
+                        onFinish={handleProfileSubmit}
                         style={cardStyling}
                         variant='filled'
                     >
@@ -114,15 +180,14 @@ const ProfileForm = ({themeConfig}) => {
                             lg={14} xl={14}>
                                 <Form.Item
                                     label="Имя"
-                                    name="firstName"
+                                    name="first_name"
                                     rules={[{ required: true, message: 'Введите ваше имя' }]}
                                 >
                                     <Input placeholder="Введите ваше имя" size='large'/>
                                 </Form.Item>
-
                                 <Form.Item
                                     label="Фамилия"
-                                    name="lastName"
+                                    name="last_name"
                                     rules={[{ message: 'Введите вашу фамилию' }]}
                                 >
                                     <Input placeholder="Введите вашу фамилию" size='large' />
@@ -147,7 +212,7 @@ const ProfileForm = ({themeConfig}) => {
 
                                 <Form.Item className="m-0">
                                     <div  style={{ textAlign: 'right' }}>
-                                    <Button type="primary" htmlType="submit" size='large'>
+                                    <Button loading={loadings[0]} type="primary" htmlType="submit" size='large'>
                                         Сохранить
                                     </Button>
                                     </div>

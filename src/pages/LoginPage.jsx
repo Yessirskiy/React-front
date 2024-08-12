@@ -20,7 +20,7 @@ const LoginPage = () => {
         <div>
             {user && <p>Hello, {user.user_id}</p>}
             <form onSubmit={handleLogin}>
-                <input type="text" name="username" placeholder="Enter username"/>
+                <input type="text" name="email" placeholder="Enter email"/>
                 <input type="password" name="password" placeholder="Enter password"/>
                 <input type="submit"/>
             </form>
