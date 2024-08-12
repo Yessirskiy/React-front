@@ -14,6 +14,8 @@ export const AuthProvider = ({children}) => {
         localStorage.getItem("authTokens") ? 
         jwtDecode(JSON.parse(localStorage.getItem("authTokens")).access) : null);
 
+    let [loading, setLoading] = useState(true);
+
     let loginUser = async (e) => {
         let response = await fetch(
             "http://localhost:8000/api/token/",
@@ -34,7 +36,7 @@ export const AuthProvider = ({children}) => {
         }
     }
 
-    const logoutUser = (e) => {
+    let logoutUser = () => {
         setAuthTokens(null);
         setUser(null);
         localStorage.removeItem("authTokens");
@@ -42,9 +44,21 @@ export const AuthProvider = ({children}) => {
 
     let contextData = {
         user: user,
+        setUser: setUser,
+
         loginUser: loginUser,
         logoutUser: logoutUser,
+
+        authTokens: authTokens,
+        setAuthTokens: setAuthTokens,
     }
+
+    useEffect(() => {
+        if (authTokens){
+            setUser(jwtDecode(authTokens.access));
+        }
+        setLoading(false);
+    }, [authTokens, loading])
 
     return (
         <AuthContext.Provider value={contextData}>

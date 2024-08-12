@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -13,6 +13,8 @@ import UserProfile from "../tabs/UserProfile.jsx"
 import UserSettings from "../tabs/UserSettings.jsx"
 import AuthContext from '../context/AuthContext.jsx';
 import { Navigate } from 'react-router-dom';
+import useAxios from '../utils/UseAxios.jsx';
+
 
 const { Header, Sider, Content } = Layout;
 const MainPage = () => {
@@ -20,6 +22,8 @@ const MainPage = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedNav, setSelectedNav] = useState("meetings_new")
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [hello, setHello] = useState("");
+  let api = useAxios();
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -111,7 +115,7 @@ const MainPage = () => {
   };
 
   const handleLogout = (e) => {
-    logoutUser(e);
+    logoutUser();
     return <Navigate to="/login"/>;
   }
 
@@ -131,6 +135,16 @@ const MainPage = () => {
         return <Tab1 />;
     }
   };
+
+  let testHello = async () => {
+    let response = await api.get('api/hello');
+    if (response.status === 200)
+        setHello(response.data.message);
+    }
+
+  useEffect(() => {
+    testHello();
+  }, []);
 
   return (
     <ConfigProvider theme={themeConfig}>
@@ -177,6 +191,7 @@ const MainPage = () => {
               }}
             />
             <Button onClick={handleLogout}/>
+            <p>{hello}</p>
           </Header>
           <Content 
             className='m-7 mb-0 h-screen overflow-scroll no-scrollbar'
