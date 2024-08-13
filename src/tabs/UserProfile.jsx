@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 
 import { Space, ConfigProvider, message } from 'antd';
 import { Form, Input, Upload, Button, Switch, Image, Modal, DatePicker, Select} from 'antd';
-import {Row, Col, Divider} from 'antd';
+import { Row, Col, Divider } from 'antd';
 import { UserOutlined, UploadOutlined } from '@ant-design/icons';
 import useAxios from '../utils/UseAxios';
 import dayjs from 'dayjs';
@@ -12,6 +12,7 @@ const profileURL = "api/users/profile/";
 
 const ProfileForm = ({themeConfig}) => {
   const [changeProfileForm] = Form.useForm();
+  const [changeProfileErrors, setChangeProfileErrors] = useState(null);
   const [changeAdditionalForm] = Form.useForm();
   const [changePasswordForm] = Form.useForm();
   const [changeAuthSettingsForm] = Form.useForm();
@@ -76,71 +77,61 @@ const ProfileForm = ({themeConfig}) => {
     getProfile();
   }, []);
 
-  const handleProfileSubmit = async (e) => {
+  const changeProfile = async (form, payload) => {
     try {
-        const payload = {
-            email: e.email,
-            first_name: e.first_name,
-            last_name: e.last_name ? e.last_name : null,
-        };
-
         const response = await api.put(profileURL, payload, {
             headers: {
                 'Content-Type': 'application/json',
             }
-        });
-
+        }); 
         if (response.status === 200) {
-            changeProfileForm.setFieldsValue(response.data);
+            let new_data = response.data;
+            if (new_data.birth_date)
+                new_data.birth_date = dayjs(new_data.birth_date);
+            form.setFieldsValue(new_data);
         }
         setNotification({
             type: 'success',
             content: 'Данные профиля обновлены.',
         });
+        handleApiFeedback(form, null);
     } catch (error) {
         setError({
             type: 'error',
             content: 'Ошибка обновления профиля.',
         });
+        if (error.response.status === 400) {
+            handleApiFeedback(form, error.response.data);
+        }
     }
+  }
+
+  const handleProfileSubmit = async (e) => {
+    const payload = {
+        email: e.email,
+        first_name: e.first_name,
+        last_name: e.last_name ? e.last_name : null,
+        phone_number: e.phone_number,
+    };
+    changeProfile(changeProfileForm, payload);
+
   };
 
   const getDateFormatted = (raw) => {
     const selectedDate = raw ? raw.toDate() : null;
     if (selectedDate) {
         const formattedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
-        console.log('Formatted Date:', formattedDate);
         return formattedDate;
     }
   };
 
   const handleAdditionalSubmit = async (e) => {
-    try {
-        const formattedBirth = getDateFormatted(e.birth_date);
-        const payload = {
-            birth_date: formattedBirth,
-            english_level: e.english_level,
-        };
-
-        const response = await api.put(profileURL, payload, {
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-
-        if (response.status === 200) {
-            changeProfileForm.setFieldsValue(response.data);
-        }
-        setNotification({
-            type: 'success',
-            content: 'Данные профиля обновлены.',
-        });
-    } catch (error) {
-        setError({
-            type: 'error',
-            content: 'Ошибка обновления профиля.',
-        });
-    }
+    const formattedBirth = getDateFormatted(e.birth_date);
+    const payload = {
+        birth_date: formattedBirth,
+        english_level: e.english_level,
+    };
+    changeProfile(changeAdditionalForm, payload);
   };
 
   useEffect(() => {
@@ -188,8 +179,30 @@ const ProfileForm = ({themeConfig}) => {
     },
   ];
   
-  
+  const handleApiFeedback = (form, errors) => {
+    form.setFields(
+        Object.keys(form.getFieldsValue()).map((name) => ({
+            name,
+            errors: [],
+        }))
+    );
 
+    if (errors){
+        const formattedErrors = {};
+
+        Object.keys(errors).forEach((field) => {
+            formattedErrors[field] = {
+                value: form.getFieldValue(field),
+                errors: errors[field],
+            };
+        });
+
+        form.setFields(Object.keys(formattedErrors).map((field) => ({
+            name: field,
+            errors: formattedErrors[field].errors,
+        })));
+    }
+};
 
   return (
     <ConfigProvider theme={themeConfig}>      
@@ -253,17 +266,15 @@ const ProfileForm = ({themeConfig}) => {
                                     label="Почта"
                                     name="email"
                                     rules={[{required: true, message: 'Введите вашу почту'}]}
-                                    initialValue="admin@example.com"
                                 >
                                     <Input size='large'/>
                                 </Form.Item>
 
                                 <Form.Item
                                     label="Номер телефона"
-                                    name="phone"
-                                    rules={[{ message: 'Введите номер телефона' }]}
+                                    name="phone_number"
                                 >
-                                    <Input addonBefore="+7" placeholder="Введите номер телефона" size='large'/>
+                                    <Input placeholder="Введите номер телефона" size='large'/>
                                 </Form.Item>
 
                                 <Form.Item className="m-0">
