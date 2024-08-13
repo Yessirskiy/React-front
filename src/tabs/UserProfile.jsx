@@ -6,12 +6,12 @@ import { Form, Input, Upload, Button, Switch, Image, Modal, DatePicker, Select} 
 import {Row, Col, Divider} from 'antd';
 import { UserOutlined, UploadOutlined } from '@ant-design/icons';
 import useAxios from '../utils/UseAxios';
+import dayjs from 'dayjs';
 
 const profileURL = "api/users/profile/";
 
 const ProfileForm = ({themeConfig}) => {
   const [changeProfileForm] = Form.useForm();
-  const [loadings, setLoadings] = useState([]);
   const [changeAdditionalForm] = Form.useForm();
   const [changePasswordForm] = Form.useForm();
   const [changeAuthSettingsForm] = Form.useForm();
@@ -27,7 +27,7 @@ const ProfileForm = ({themeConfig}) => {
   const onFinish = (values) => {
     console.log('Form values: ', values);
   };
-  
+
   const cardStyling = {
     padding: "24px",
     backgroundColor: themeConfig.token.colorBgContainer,
@@ -64,6 +64,11 @@ const ProfileForm = ({themeConfig}) => {
     let response = await api.get(profileURL);
     if (response.status === 200){
         changeProfileForm.setFieldsValue(response.data);
+        const additionalPayload = {
+            birth_date: dayjs(new Date(response.data.birth_date)),
+            english_level: response.data.english_level,
+        }
+        changeAdditionalForm.setFieldsValue(additionalPayload);
     }
   };
 
@@ -98,7 +103,45 @@ const ProfileForm = ({themeConfig}) => {
             content: 'Ошибка обновления профиля.',
         });
     }
-  }
+  };
+
+  const getDateFormatted = (raw) => {
+    const selectedDate = raw ? raw.toDate() : null;
+    if (selectedDate) {
+        const formattedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+        console.log('Formatted Date:', formattedDate);
+        return formattedDate;
+    }
+  };
+
+  const handleAdditionalSubmit = async (e) => {
+    try {
+        const formattedBirth = getDateFormatted(e.birth_date);
+        const payload = {
+            birth_date: formattedBirth,
+            english_level: e.english_level,
+        };
+
+        const response = await api.put(profileURL, payload, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (response.status === 200) {
+            changeProfileForm.setFieldsValue(response.data);
+        }
+        setNotification({
+            type: 'success',
+            content: 'Данные профиля обновлены.',
+        });
+    } catch (error) {
+        setError({
+            type: 'error',
+            content: 'Ошибка обновления профиля.',
+        });
+    }
+  };
 
   useEffect(() => {
     if (notification) {
@@ -116,23 +159,36 @@ const ProfileForm = ({themeConfig}) => {
 
   const langLevels = [
     {
-      value: 'jack',
-      label: 'Jack',
+      value: 'A0',
+      label: '🍼 Ничего не знаю',
     },
     {
-      value: 'lucy',
-      label: 'Lucy',
+      value: 'A1',
+      label: '👶 Начальный уровень (Начинающий)',
     },
     {
-      value: 'Yiminghe',
-      label: 'yiminghe',
+      value: 'A2',
+      label: '🗣️ Основы общения (Предварительный)',
     },
     {
-      value: 'disabled',
-      label: 'Disabled',
-      disabled: true,
+      value: 'B1',
+      label: '💬 Средний уровень (Разговорный)',
+    },
+    {
+      value: 'B2',
+      label: '🎯 Выше среднего (Самостоятельный)',
+    },
+    {
+      value: 'C1',
+      label: '🌐 Продвинутый уровень (Продвинутый)',
+    },
+    {
+      value: 'C2',
+      label: '🏅 Профессиональный уровень (Свободный)',
     },
   ];
+  
+  
 
 
   return (
@@ -212,9 +268,9 @@ const ProfileForm = ({themeConfig}) => {
 
                                 <Form.Item className="m-0">
                                     <div  style={{ textAlign: 'right' }}>
-                                    <Button loading={loadings[0]} type="primary" htmlType="submit" size='large'>
-                                        Сохранить
-                                    </Button>
+                                        <Button type="primary" htmlType="submit" size='large'>
+                                            Сохранить
+                                        </Button>
                                     </div>
                                 </Form.Item>
                             </Col>
@@ -229,19 +285,19 @@ const ProfileForm = ({themeConfig}) => {
                     <Form
                         form={changeAdditionalForm}
                         layout="vertical"
-                        onFinish={onFinish}
+                        onFinish={handleAdditionalSubmit}
                         style={cardStyling}
                         variant='filled'
                     >
                         <Form.Item
                             label="Дата рождения"
-                            name="firstName"
+                            name="birth_date"
                         >
                             <DatePicker placeholder='Укажите дату' className='h-10'></DatePicker>
                         </Form.Item>
                         <Form.Item
                             label="Уровень английского языка"
-                            name="firstName"
+                            name="english_level"
                         >
                             <Select 
                                 placeholder='Выберете ваш уровень' 

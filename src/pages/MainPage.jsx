@@ -149,10 +149,10 @@ const MainPage = () => {
   return (
     <ConfigProvider theme={themeConfig}>
       <Layout className='h-screen'>
-        <Sider trigger={null} collapsible collapsed={collapsed ? "true" : undefined} style={{background: themeConfig.token.colorBgContainer}}>
+        <Sider trigger={null} collapsible="true" collapsed={collapsed ? "true" : undefined} style={{background: themeConfig.token.colorBgContainer}}>
           <div 
             className="demo-logo-vertical flex items-center gap-2" 
-            collapsible collapsed={collapsed ? "true" : undefined}
+            collapsible="true" collapsed={collapsed ? "true" : undefined}
             style={{
               height: '32px',
               margin: '16px',
