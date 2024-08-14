@@ -1,21 +1,23 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 
-import { Space, ConfigProvider, message } from 'antd';
+import { Flex, Space, ConfigProvider, message } from 'antd';
 import { Form, Input, Upload, Button, Switch, Image, Modal, DatePicker, Select} from 'antd';
-import { Row, Col, Divider } from 'antd';
+import { Row, Col, Divider, Skeleton } from 'antd';
 import { UserOutlined, UploadOutlined } from '@ant-design/icons';
 import useAxios from '../utils/UseAxios';
 import dayjs from 'dayjs';
 
 const profileURL = "api/users/profile/";
+const authPreferencesURL = "api/users/preferences/auth/";
 
 const ProfileForm = ({themeConfig}) => {
   const [changeProfileForm] = Form.useForm();
-  const [changeProfileErrors, setChangeProfileErrors] = useState(null);
   const [changeAdditionalForm] = Form.useForm();
+  const [showProfileLoading, setShowProfileLoading] = useState(true);
+
   const [changePasswordForm] = Form.useForm();
-  const [changeAuthSettingsForm] = Form.useForm();
+  const [changeAuthPreferencesForm] = Form.useForm();
 
   const [showLogin2FA, setShowLogin2FA] = useState(false);
   
@@ -71,11 +73,8 @@ const ProfileForm = ({themeConfig}) => {
         }
         changeAdditionalForm.setFieldsValue(additionalPayload);
     }
+    setShowProfileLoading(false);
   };
-
-  useEffect(() => {
-    getProfile();
-  }, []);
 
   const changeProfile = async (form, payload) => {
     try {
@@ -104,17 +103,58 @@ const ProfileForm = ({themeConfig}) => {
             handleApiFeedback(form, error.response.data);
         }
     }
+  };
+
+  const getAuthPreferences = async () => {
+    let response = await api.get(authPreferencesURL);
+    if (response.status === 200){
+        changeAuthPreferencesForm.setFieldsValue(response.data);
+    }
+    setShowProfileLoading(false);
   }
 
-  const handleProfileSubmit = async (e) => {
+  const changeAuthPreferences = async (form, payload) => {
+    try {
+        const response = await api.put(authPreferencesURL, payload, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }); 
+        if (response.status === 200) {
+            let new_data = response.data;
+            form.setFieldsValue(new_data);
+        }
+        setNotification({
+            type: 'success',
+            content: 'Данные профиля обновлены.',
+        });
+        handleApiFeedback(form, null);
+    } catch (error) {
+        setError({
+            type: 'error',
+            content: 'Ошибка обновления профиля.',
+        });
+        if (error.response.status === 400) {
+            handleApiFeedback(form, error.response.data);
+        }
+    }
+  }
+
+  useEffect(() => {
+    getProfile();
+    getAuthPreferences();
+  }, []);
+
+  
+
+  const handleProfileSubmit = (e) => {
     const payload = {
         email: e.email,
         first_name: e.first_name,
         last_name: e.last_name ? e.last_name : null,
-        phone_number: e.phone_number,
+        phone_number: e.phone_number ? e.phone_number: null,
     };
     changeProfile(changeProfileForm, payload);
-
   };
 
   const getDateFormatted = (raw) => {
@@ -125,7 +165,7 @@ const ProfileForm = ({themeConfig}) => {
     }
   };
 
-  const handleAdditionalSubmit = async (e) => {
+  const handleAdditionalSubmit = (e) => {
     const formattedBirth = getDateFormatted(e.birth_date);
     const payload = {
         birth_date: formattedBirth,
@@ -133,6 +173,10 @@ const ProfileForm = ({themeConfig}) => {
     };
     changeProfile(changeAdditionalForm, payload);
   };
+
+  const handleAuthPreferencesSubmit = (e) => {
+    changeAuthPreferences(changeAuthPreferencesForm, e);
+  }
 
   useEffect(() => {
     if (notification) {
@@ -204,6 +248,14 @@ const ProfileForm = ({themeConfig}) => {
     }
 };
 
+  const RightSwitch = (props) => {
+    return (
+        <div className='text-right'>
+            <Switch {...props}></Switch>
+        </div>
+    )
+  };
+
   return (
     <ConfigProvider theme={themeConfig}>      
         <Space className='flex' direction='vertical' size="large">
@@ -217,113 +269,117 @@ const ProfileForm = ({themeConfig}) => {
                     xs={24} sm={24} md={24}
                     lg={12} xl={12}
                 >
-                    <Form
-                        form={changeProfileForm}
-                        layout="vertical"
-                        onFinish={handleProfileSubmit}
-                        style={cardStyling}
-                        variant='filled'
-                    >
-                        <Row
-                        gutter={[24, 24]}
+                    <Skeleton active="true" loading={showProfileLoading} title="false">
+                        <Form
+                            form={changeProfileForm}
+                            layout="vertical"
+                            onFinish={handleProfileSubmit}
+                            style={cardStyling}
+                            variant='filled'
                         >
-                            <Col 
-                            className="text-center gutter-row"
-                            xs={24} sm={24} md={12}
-                            lg={10} xl={10}>
-                                <Image
-                                    src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-                                    style={{borderRadius: themeConfig.token.borderRadiusLG}}
-                                />
-                                <Form.Item name="avatar" valuePropName="fileList">
-                                    <Upload listType="picture" maxCount={1}>
-                                    <Button icon={<UploadOutlined />} className="mt-5 h-10">
-                                        Выбрать файл...
-                                    </Button>
-                                    </Upload>
-                                </Form.Item>
-                            </Col>
-                            <Col 
-                            className="gutter-row"
-                            xs={24} sm={24} md={12}
-                            lg={14} xl={14}>
-                                <Form.Item
-                                    label="Имя"
-                                    name="first_name"
-                                    rules={[{ required: true, message: 'Введите ваше имя' }]}
-                                >
-                                    <Input placeholder="Введите ваше имя" size='large'/>
-                                </Form.Item>
-                                <Form.Item
-                                    label="Фамилия"
-                                    name="last_name"
-                                    rules={[{ message: 'Введите вашу фамилию' }]}
-                                >
-                                    <Input placeholder="Введите вашу фамилию" size='large' />
-                                </Form.Item>
-
-                                <Form.Item
-                                    label="Почта"
-                                    name="email"
-                                    rules={[{required: true, message: 'Введите вашу почту'}]}
-                                >
-                                    <Input size='large'/>
-                                </Form.Item>
-
-                                <Form.Item
-                                    label="Номер телефона"
-                                    name="phone_number"
-                                >
-                                    <Input placeholder="Введите номер телефона" size='large'/>
-                                </Form.Item>
-
-                                <Form.Item className="m-0">
-                                    <div  style={{ textAlign: 'right' }}>
-                                        <Button type="primary" htmlType="submit" size='large'>
-                                            Сохранить
+                            <Row
+                            gutter={[24, 24]}
+                            >
+                                <Col 
+                                className="text-center gutter-row"
+                                xs={24} sm={24} md={12}
+                                lg={10} xl={10}>
+                                    <Image
+                                        src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                                        style={{borderRadius: themeConfig.token.borderRadiusLG}}
+                                    />
+                                    <Form.Item name="avatar" valuePropName="fileList">
+                                        <Upload listType="picture" maxCount={1}>
+                                        <Button icon={<UploadOutlined />} className="mt-5 h-10">
+                                            Выбрать файл...
                                         </Button>
-                                    </div>
-                                </Form.Item>
-                            </Col>
-                        </Row>
-                    </Form>
+                                        </Upload>
+                                    </Form.Item>
+                                </Col>
+                                <Col 
+                                className="gutter-row"
+                                xs={24} sm={24} md={12}
+                                lg={14} xl={14}>
+                                    <Form.Item
+                                        label="Имя"
+                                        name="first_name"
+                                        rules={[{ required: true, message: 'Введите ваше имя' }]}
+                                    >
+                                        <Input placeholder="Введите ваше имя" size='large'/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        label="Фамилия"
+                                        name="last_name"
+                                        rules={[{ message: 'Введите вашу фамилию' }]}
+                                    >
+                                        <Input placeholder="Введите вашу фамилию" size='large' />
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        label="Почта"
+                                        name="email"
+                                        rules={[{required: true, message: 'Введите вашу почту'}]}
+                                    >
+                                        <Input size='large'/>
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        label="Номер телефона"
+                                        name="phone_number"
+                                    >
+                                        <Input placeholder="Введите номер телефона" size='large'/>
+                                    </Form.Item>
+
+                                    <Form.Item className="m-0">
+                                        <div  style={{ textAlign: 'right' }}>
+                                            <Button type="primary" htmlType="submit" size='large'>
+                                                Сохранить
+                                            </Button>
+                                        </div>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                        </Form>
+                    </Skeleton>
                 </Col>
                 <Col
                     className='gutter-row'
                     xs={24} sm={24} md={24}
                     lg={12} xl={12}
                 >
-                    <Form
-                        form={changeAdditionalForm}
-                        layout="vertical"
-                        onFinish={handleAdditionalSubmit}
-                        style={cardStyling}
-                        variant='filled'
-                    >
-                        <Form.Item
-                            label="Дата рождения"
-                            name="birth_date"
+                    <Skeleton active="true" loading={showProfileLoading} title="false">
+                        <Form
+                            form={changeAdditionalForm}
+                            layout="vertical"
+                            onFinish={handleAdditionalSubmit}
+                            style={cardStyling}
+                            variant='filled'
                         >
-                            <DatePicker placeholder='Укажите дату' className='h-10'></DatePicker>
-                        </Form.Item>
-                        <Form.Item
-                            label="Уровень английского языка"
-                            name="english_level"
-                        >
-                            <Select 
-                                placeholder='Выберете ваш уровень' 
-                                options={langLevels}
-                                className='h-10'
-                            />
-                        </Form.Item>
-                        <Form.Item className="m-0">
-                            <div  style={{ textAlign: 'right' }}>
-                            <Button type="primary" htmlType="submit" size='large'>
-                                Сохранить
-                            </Button>
-                            </div>
-                        </Form.Item>
-                    </Form>
+                            <Form.Item
+                                label="Дата рождения"
+                                name="birth_date"
+                            >
+                                <DatePicker placeholder='Укажите дату' className='h-10'></DatePicker>
+                            </Form.Item>
+                            <Form.Item
+                                label="Уровень английского языка"
+                                name="english_level"
+                            >
+                                <Select 
+                                    placeholder='Выберете ваш уровень' 
+                                    options={langLevels}
+                                    className='h-10'
+                                />
+                            </Form.Item>
+                            <Form.Item className="m-0">
+                                <div  style={{ textAlign: 'right' }}>
+                                <Button type="primary" htmlType="submit" size='large'>
+                                    Сохранить
+                                </Button>
+                                </div>
+                            </Form.Item>
+                        </Form>
+                    </Skeleton>
                 </Col>
             </Row>
             
@@ -401,9 +457,9 @@ const ProfileForm = ({themeConfig}) => {
                 xs={24} sm={24} md={24}
                 lg={12} xl={12}>
                     <Form
-                        form={changeAuthSettingsForm}
+                        form={changeAuthPreferencesForm}
                         layout="vertical"
-                        onFinish={onFinish}
+                        onFinish={handleAuthPreferencesSubmit}
                         style={cardStyling}
                         variant='filled'
                     >
@@ -413,22 +469,16 @@ const ProfileForm = ({themeConfig}) => {
                             layout='horizontal'
                             valuePropName="checked"
                         >
-                            <div className='text-right'>
-                                <Switch ></Switch>
-                            </div>
-                            
+                            <RightSwitch/>
                         </Form.Item>
 
                         <Form.Item
                             label="Двухфакторная аутентификация"
-                            name="2fa_login"
+                            name="twofa"
                             layout='horizontal'
                             valuePropName="checked"
                         >
-                            <div className='text-right'>
-                                <Switch onChange={onTwofaChange}></Switch>
-                            </div>
-                            
+                            <RightSwitch/>
                         </Form.Item>
                         <Modal
                             title={<p>Настройка двухфакторной аутентификации</p>}
