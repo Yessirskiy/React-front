@@ -14,6 +14,7 @@ const authPreferencesURL = "api/users/preferences/auth/";
 const ProfileForm = ({themeConfig}) => {
   const [changeProfileForm] = Form.useForm();
   const [changeAdditionalForm] = Form.useForm();
+  const [profileImg, setProfileImg] = useState(null);
   const [showProfileLoading, setShowProfileLoading] = useState(true);
 
   const [changePasswordForm] = Form.useForm();
@@ -66,6 +67,10 @@ const ProfileForm = ({themeConfig}) => {
   const getProfile = async () => {
     let response = await api.get(profileURL);
     if (response.status === 200){
+        if (response.data.avatar) {
+            setProfileImg(response.data.avatar);
+            delete response.data.avatar;
+        }
         changeProfileForm.setFieldsValue(response.data);
         const additionalPayload = {
             birth_date: dayjs(new Date(response.data.birth_date)),
@@ -87,6 +92,10 @@ const ProfileForm = ({themeConfig}) => {
             let new_data = response.data;
             if (new_data.birth_date)
                 new_data.birth_date = dayjs(new_data.birth_date);
+            if (new_data.avatar){
+                setProfileImg(new_data.avatar);
+                delete new_data.avatar;
+            }
             form.setFieldsValue(new_data);
         }
         setNotification({
@@ -177,6 +186,7 @@ const ProfileForm = ({themeConfig}) => {
   const handleAuthPreferencesSubmit = (e) => {
     changeAuthPreferences(changeAuthPreferencesForm, e);
   }
+
 
   useEffect(() => {
     if (notification) {
@@ -285,7 +295,7 @@ const ProfileForm = ({themeConfig}) => {
                                 xs={24} sm={24} md={12}
                                 lg={10} xl={10}>
                                     <Image
-                                        src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                                        src={profileImg}
                                         style={{borderRadius: themeConfig.token.borderRadiusLG}}
                                     />
                                     <Form.Item name="avatar" valuePropName="fileList">
@@ -399,57 +409,56 @@ const ProfileForm = ({themeConfig}) => {
                         style={cardStyling}
                         variant='filled'
                     >
-                        <div style={{ flex: 1 }}>
-                            <Form.Item
-                                name="old_password"
-                                label="Старый пароль"
-                                rules={[
-                                {
-                                    required: true,
-                                    message: 'Введите старый пароль.',
-                                },
-                                ]}
-                                hasFeedback
-                            >
-                                <Input.Password placeholder='Введите старый пароль' size='large'/>
-                            </Form.Item>
+                        <h3 className="mb-5 text-center font-medium">Изменение пароля</h3>
+                        <Form.Item
+                            name="old_password"
+                            label="Старый пароль"
+                            rules={[
+                            {
+                                required: true,
+                                message: 'Введите старый пароль.',
+                            },
+                            ]}
+                            hasFeedback
+                        >
+                            <Input.Password placeholder='Введите старый пароль' size='large'/>
+                        </Form.Item>
 
-                            <Form.Item
-                                name="password1"
-                                label="Новый пароль"
-                                rules={[
-                                {
-                                    required: true,
-                                    message: 'Введите новый пароль.',
-                                },
-                                ]}
-                                hasFeedback
-                            >
-                                <Input.Password placeholder='Введите новый пароль' size='large'/>
-                            </Form.Item>
+                        <Form.Item
+                            name="password1"
+                            label="Новый пароль"
+                            rules={[
+                            {
+                                required: true,
+                                message: 'Введите новый пароль.',
+                            },
+                            ]}
+                            hasFeedback
+                        >
+                            <Input.Password placeholder='Введите новый пароль' size='large'/>
+                        </Form.Item>
 
-                            <Form.Item
-                                name="password2"
-                                label="Новый пароль (подтверждение)"
-                                rules={[
-                                {
-                                    required: true,
-                                    message: 'Введите новый пароль (подтверждение).',
-                                },
-                                ]}
-                                hasFeedback
-                            >
-                                <Input.Password placeholder='Введите новый пароль (подтверждение)' size='large'/>
-                            </Form.Item>
+                        <Form.Item
+                            name="password2"
+                            label="Новый пароль (подтверждение)"
+                            rules={[
+                            {
+                                required: true,
+                                message: 'Введите новый пароль (подтверждение).',
+                            },
+                            ]}
+                            hasFeedback
+                        >
+                            <Input.Password placeholder='Введите новый пароль (подтверждение)' size='large'/>
+                        </Form.Item>
 
-                            <Form.Item className="m-0">
-                                <div  style={{ textAlign: 'right' }}>
-                                <Button type="primary" htmlType="submit" className="h-10">
-                                    Сохранить
-                                </Button>
-                                </div>
-                            </Form.Item>
-                        </div>
+                        <Form.Item className="m-0">
+                            <div  style={{ textAlign: 'right' }}>
+                            <Button type="primary" htmlType="submit" className="h-10">
+                                Сохранить
+                            </Button>
+                            </div>
+                        </Form.Item>
                     </Form>
                 </Col>
                 <Col 
