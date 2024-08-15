@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { Image, Flex, message, Upload } from 'antd';
+import { Image, Flex, message, Upload, Button } from 'antd';
 import useAxios from '../../utils/UseAxios';
 
 const beforeUpload = (file) => {
@@ -15,7 +15,7 @@ const beforeUpload = (file) => {
   return isJpgOrPng && isLt2M;
 };
 
-const profileChangeURL = 'api/users/profile/picture/'
+const avatarChangeURL = 'api/users/profile/picture/'
 
 const AvatarUploader = ({profileImg, borderRadius}) => {
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
   const updateAvatar = async ({ file, onSuccess, onError }) => {
     try {
         const response = await api.put(
-            profileChangeURL,
+            avatarChangeURL,
             { avatar: file },
             {
                 headers: {
@@ -56,14 +56,38 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
     }
   };
 
+  const removeAvatar = async (e) => {
+    console.log(e);
+    try {
+        const response = await api.delete(
+            avatarChangeURL,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }
+        );
+        
+        if (response.status === 200) {
+            setImageUrl(null);
+        } 
+    } catch (error) {
+        console.log(error);
+    }
+  }
+
   const uploadButton = (
     <button
       style={{
         border: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 8,
         background: 'none',
-        width: '100%',
-        height: '100%',
       }}
+      className='w-full'
       type="button"
     >
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -72,24 +96,25 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
           marginTop: 8,
         }}
       >
-        Загружаем...
+        {loading ? "Загружаем..." : "Добавьте фотографию профиля"}
       </div>
     </button>
   );
+
   return (
     <div
       style={{
         width: '100%',
-        height: '70%',
+        height: '100%',
         display: 'flex',
-        justifyContent: 'center',
+        flexDirection: 'column',
         borderRadius: borderRadius,
       }}
     >
         <Upload
             name="avatar"
             listType="picture-card"
-            className="avatar-uploader fullSizedUpload"
+            className="avatar-uploader  "
             showUploadList={false}
             customRequest={updateAvatar}
             beforeUpload={beforeUpload}
@@ -110,6 +135,9 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
             uploadButton
         )}
         </Upload>
+        {imageUrl && (
+            <Button className='mt-6' danger size='middle' onClick={removeAvatar}>Удалить</Button>
+        )}
     </div>
   );
 };
