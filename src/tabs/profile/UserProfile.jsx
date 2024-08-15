@@ -5,7 +5,8 @@ import { Flex, Space, ConfigProvider, message } from 'antd';
 import { Form, Input, Upload, Button, Switch, Image, Modal, DatePicker, Select} from 'antd';
 import { Row, Col, Divider, Skeleton } from 'antd';
 import { UserOutlined, UploadOutlined } from '@ant-design/icons';
-import useAxios from '../utils/UseAxios';
+import useAxios from '../../utils/UseAxios';
+import AvatarUploader from './AvatarUpload';
 import dayjs from 'dayjs';
 
 const profileURL = "api/users/profile/";
@@ -294,7 +295,8 @@ const ProfileForm = ({themeConfig}) => {
                                 className="text-center gutter-row"
                                 xs={24} sm={24} md={12}
                                 lg={10} xl={10}>
-                                    <Image
+                                    <AvatarUploader profileImg={profileImg} borderRadius={themeConfig.token.borderRadius}/>
+                                    {/* <Image
                                         src={profileImg}
                                         style={{borderRadius: themeConfig.token.borderRadiusLG}}
                                     />
@@ -304,7 +306,7 @@ const ProfileForm = ({themeConfig}) => {
                                             Выбрать файл...
                                         </Button>
                                         </Upload>
-                                    </Form.Item>
+                                    </Form.Item> */}
                                 </Col>
                                 <Col 
                                 className="gutter-row"

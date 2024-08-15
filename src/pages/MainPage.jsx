@@ -9,7 +9,7 @@ import {
   MoonOutlined,
 } from '@ant-design/icons';
 import { Avatar, Button, Layout, Menu, Breadcrumb, theme, ConfigProvider } from 'antd';
-import UserProfile from "../tabs/UserProfile.jsx"
+import UserProfile from "../tabs/profile/UserProfile.jsx"
 import UserSettings from "../tabs/UserSettings.jsx"
 import AuthContext from '../context/AuthContext.jsx';
 import { Navigate } from 'react-router-dom';
