@@ -9,7 +9,7 @@ import {
   MoonOutlined,
 } from '@ant-design/icons';
 import { Avatar, Button, Layout, Menu, Breadcrumb, theme, ConfigProvider } from 'antd';
-import UserProfile from "../tabs/profile/UserProfile.jsx"
+import UserProfile from "./profile/UserProfilePage.jsx"
 import UserSettings from "../tabs/UserSettings.jsx"
 import AuthContext from '../context/AuthContext.jsx';
 import { Navigate } from 'react-router-dom';
@@ -39,9 +39,9 @@ const MainPage = () => {
       // colorTextBase: isDarkMode ? '#EEEEEE' : '#000000',
       colorBgContainer: isDarkMode ? '#222831' : '#ffffff', 
       // colorBgContainer: isDarkMode ? '#222831' : '#F7F9FB', 
-      borderRadiusSM: "4px",
-      borderRadius: "6px",
-      borderRadiusLG: "8px",
+      borderRadiusSM: 4,
+      borderRadius: 6,
+      borderRadiusLG: 8,
     },
   };
 

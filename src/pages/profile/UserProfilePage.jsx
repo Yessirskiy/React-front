@@ -2,9 +2,9 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 
 import { Flex, Space, ConfigProvider, message } from 'antd';
-import { Form, Input, Upload, Button, Switch, Image, Modal, DatePicker, Select} from 'antd';
+import { Form, Input, Upload, Button, Switch, Image, Modal, DatePicker, Select, Tooltip } from 'antd';
 import { Row, Col, Divider, Skeleton } from 'antd';
-import { UserOutlined, UploadOutlined } from '@ant-design/icons';
+import { UserOutlined, UploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import useAxios from '../../utils/UseAxios';
 import AvatarUploader from './AvatarUpload';
 import dayjs from 'dayjs';
@@ -296,17 +296,6 @@ const ProfileForm = ({themeConfig}) => {
                                 xs={24} sm={24} md={12}
                                 lg={10} xl={10}>
                                     <AvatarUploader profileImg={profileImg} borderRadius={themeConfig.token.borderRadius}/>
-                                    {/* <Image
-                                        src={profileImg}
-                                        style={{borderRadius: themeConfig.token.borderRadiusLG}}
-                                    />
-                                    <Form.Item name="avatar" valuePropName="fileList">
-                                        <Upload listType="picture" maxCount={1}>
-                                        <Button icon={<UploadOutlined />} className="mt-5 h-10">
-                                            Выбрать файл...
-                                        </Button>
-                                        </Upload>
-                                    </Form.Item> */}
                                 </Col>
                                 <Col 
                                 className="gutter-row"
@@ -368,10 +357,17 @@ const ProfileForm = ({themeConfig}) => {
                             variant='filled'
                         >
                             <Form.Item
-                                label="Дата рождения"
-                                name="birth_date"
+                                label= "Дата рождения"
                             >
-                                <DatePicker placeholder='Укажите дату' className='h-10'></DatePicker>
+                                <Space>
+                                    <Form.Item name="birth_date" noStyle>
+                                        <DatePicker placeholder='Укажите дату' className='h-10'></DatePicker>
+                                    </Form.Item>
+                                    
+                                    <Tooltip title="Некоторые встречи имеют возрастное ограничение" placement='right'>
+                                        <QuestionCircleOutlined/>
+                                    </Tooltip>
+                                </Space>
                             </Form.Item>
                             <Form.Item
                                 label="Уровень английского языка"
@@ -382,6 +378,37 @@ const ProfileForm = ({themeConfig}) => {
                                     options={langLevels}
                                     className='h-10'
                                 />
+                            </Form.Item>
+                            <Form.Item label="Локация">
+                                <Space>
+                                    <Space.Compact>
+                                        <Form.Item
+                                            name={['address', 'country']}
+                                            noStyle
+                                        >
+                                            <Select className='h-10' placeholder="Выберете страну" showSearch>
+                                                <Option value="Zhejiang">Zhejiang</Option>
+                                                <Option value="Jiangsu">Jiangsu</Option>
+                                            </Select>
+                                        </Form.Item>
+                                        <Form.Item
+                                            name={['address', 'city']}
+                                            noStyle
+                                        >
+                                        <Select
+                                            style={{
+                                                width: '50%',
+                                            }}
+                                            className='h-10'
+                                            placeholder="Введите город"
+                                        />
+                                        </Form.Item>
+                                    </Space.Compact>
+                                    <Tooltip title="Город необходим для подбора оффлайн встреч" placement='right'>
+                                        <QuestionCircleOutlined/>
+                                    </Tooltip>
+                                </Space>
+                                
                             </Form.Item>
                             <Form.Item className="m-0">
                                 <div  style={{ textAlign: 'right' }}>

@@ -114,7 +114,7 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
         <Upload
             name="avatar"
             listType="picture-card"
-            className="avatar-uploader  "
+            className="avatar-uploader"
             showUploadList={false}
             customRequest={updateAvatar}
             beforeUpload={beforeUpload}
