@@ -1,10 +1,9 @@
 import useAxios from "../utils/UseAxios";
 
-const api = useAxios();
 const profileURL = 'api/users/profile/';
 const authPreferencesURL = 'api/users/preferences/auth/';
 
-export const getProfile = async () => {
+export const getProfile = async (api) => {
     try {
         const response = await api.get(profileURL);
         return response.data;
@@ -14,7 +13,7 @@ export const getProfile = async () => {
     }
 };
 
-export const updateProfile = async (payload) => {
+export const updateProfile = async (api, payload) => {
     try {
         const response = await api.put(profileURL, payload, {
             headers: {
@@ -28,7 +27,7 @@ export const updateProfile = async (payload) => {
     }
 }
 
-export const getAuthPreferences = async () => {
+export const getAuthPreferences = async (api) => {
     try {
         const response = await api.get(authPreferencesURL); 
         return response.data;
@@ -38,7 +37,7 @@ export const getAuthPreferences = async () => {
     }
 }
 
-export const updateAuthPreferences = async (payload) => {
+export const updateAuthPreferences = async (api, payload) => {
     try {
         const response = await api.put(authPreferencesURL, payload, {
             headers: {

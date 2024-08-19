@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
+import { NotificationProvider } from '../../context/NotificationContext';
 
 import { Flex, Space, ConfigProvider, message } from 'antd';
 import { Form, Input, Upload, Button, Switch, Image, Modal, DatePicker, Select, Tooltip } from 'antd';
@@ -9,12 +10,14 @@ import useAxios from '../../utils/UseAxios';
 import AvatarUploader from './AvatarUpload';
 import dayjs from 'dayjs';
 
+import UserAdditionalForm from './forms/UserAdditionalForm';
+
 const profileURL = "api/users/profile/";
 const authPreferencesURL = "api/users/preferences/auth/";
 
 const ProfileForm = ({themeConfig}) => {
   const [changeProfileForm] = Form.useForm();
-  const [changeAdditionalForm] = Form.useForm();
+  const [profile, setProfile] = useState(null);
   const [profileImg, setProfileImg] = useState(null);
   const [showProfileLoading, setShowProfileLoading] = useState(true);
 
@@ -22,10 +25,6 @@ const ProfileForm = ({themeConfig}) => {
   const [changeAuthPreferencesForm] = Form.useForm();
 
   const [showLogin2FA, setShowLogin2FA] = useState(false);
-  
-  const [messageApi, contextHolder] = message.useMessage();
-  const [notification, setNotification] = useState(null);
-  const [error, setError] = useState(null)
 
   let api = useAxios();
 
@@ -73,11 +72,7 @@ const ProfileForm = ({themeConfig}) => {
             delete response.data.avatar;
         }
         changeProfileForm.setFieldsValue(response.data);
-        const additionalPayload = {
-            birth_date: dayjs(new Date(response.data.birth_date)),
-            english_level: response.data.english_level,
-        }
-        changeAdditionalForm.setFieldsValue(additionalPayload);
+        setProfile(response.data);
     }
     setShowProfileLoading(false);
   };
@@ -99,16 +94,16 @@ const ProfileForm = ({themeConfig}) => {
             }
             form.setFieldsValue(new_data);
         }
-        setNotification({
-            type: 'success',
-            content: 'Данные профиля обновлены.',
-        });
+        // setNotification({
+        //     type: 'success',
+        //     content: 'Данные профиля обновлены.',
+        // });
         handleApiFeedback(form, null);
     } catch (error) {
-        setError({
-            type: 'error',
-            content: 'Ошибка обновления профиля.',
-        });
+        // setNotification({
+        //     type: 'error',
+        //     content: 'Ошибка обновления профиля.',
+        // });
         if (error.response.status === 400) {
             handleApiFeedback(form, error.response.data);
         }
@@ -134,16 +129,16 @@ const ProfileForm = ({themeConfig}) => {
             let new_data = response.data;
             form.setFieldsValue(new_data);
         }
-        setNotification({
-            type: 'success',
-            content: 'Данные профиля обновлены.',
-        });
+        // setNotification({
+        //     type: 'success',
+        //     content: 'Данные профиля обновлены.',
+        // });
         handleApiFeedback(form, null);
     } catch (error) {
-        setError({
-            type: 'error',
-            content: 'Ошибка обновления профиля.',
-        });
+        // setNotification({
+        //     type: 'error',
+        //     content: 'Ошибка обновления профиля.',
+        // });
         if (error.response.status === 400) {
             handleApiFeedback(form, error.response.data);
         }
@@ -155,8 +150,6 @@ const ProfileForm = ({themeConfig}) => {
     getAuthPreferences();
   }, []);
 
-  
-
   const handleProfileSubmit = (e) => {
     const payload = {
         email: e.email,
@@ -167,72 +160,9 @@ const ProfileForm = ({themeConfig}) => {
     changeProfile(changeProfileForm, payload);
   };
 
-  const getDateFormatted = (raw) => {
-    const selectedDate = raw ? raw.toDate() : null;
-    if (selectedDate) {
-        const formattedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
-        return formattedDate;
-    }
-  };
-
-  const handleAdditionalSubmit = (e) => {
-    const formattedBirth = getDateFormatted(e.birth_date);
-    const payload = {
-        birth_date: formattedBirth,
-        english_level: e.english_level,
-    };
-    changeProfile(changeAdditionalForm, payload);
-  };
-
   const handleAuthPreferencesSubmit = (e) => {
     changeAuthPreferences(changeAuthPreferencesForm, e);
   }
-
-
-  useEffect(() => {
-    if (notification) {
-      messageApi.open(notification);
-      setNotification(null);
-    }
-  }, [notification, messageApi]);
-
-  useEffect(() => {
-    if (error) {
-      messageApi.open(error);
-      setError(null);
-    }
-  }, [error, messageApi]);
-
-  const langLevels = [
-    {
-      value: 'A0',
-      label: '🍼 Ничего не знаю',
-    },
-    {
-      value: 'A1',
-      label: '👶 Начальный уровень (Начинающий)',
-    },
-    {
-      value: 'A2',
-      label: '🗣️ Основы общения (Предварительный)',
-    },
-    {
-      value: 'B1',
-      label: '💬 Средний уровень (Разговорный)',
-    },
-    {
-      value: 'B2',
-      label: '🎯 Выше среднего (Самостоятельный)',
-    },
-    {
-      value: 'C1',
-      label: '🌐 Продвинутый уровень (Продвинутый)',
-    },
-    {
-      value: 'C2',
-      label: '🏅 Профессиональный уровень (Свободный)',
-    },
-  ];
   
   const handleApiFeedback = (form, errors) => {
     form.setFields(
@@ -269,280 +199,211 @@ const ProfileForm = ({themeConfig}) => {
 
   return (
     <ConfigProvider theme={themeConfig}>      
-        <Space className='flex' direction='vertical' size="large">
-            {contextHolder}
-            <Divider orientation="left">Профиль</Divider>
-            <Row 
-                gutter={[28, 28]}
-            >
-                <Col 
+        <NotificationProvider>
+            <Space className='flex' direction='vertical' size="large">
+                <Divider orientation="left">Профиль</Divider>
+                <Row 
+                    gutter={[28, 28]}
+                >
+                    <Col 
+                        className='gutter-row'
+                        xs={24} sm={24} md={24}
+                        lg={12} xl={12}
+                    >
+                        <Skeleton active="true" loading={showProfileLoading} title="false">
+                            <Form
+                                form={changeProfileForm}
+                                layout="vertical"
+                                onFinish={handleProfileSubmit}
+                                style={cardStyling}
+                                variant='filled'
+                            >
+                                <Row
+                                gutter={[24, 24]}
+                                >
+                                    <Col 
+                                    className="text-center gutter-row"
+                                    xs={24} sm={24} md={12}
+                                    lg={10} xl={10}>
+                                        <AvatarUploader profileImg={profileImg} borderRadius={themeConfig.token.borderRadius}/>
+                                    </Col>
+                                    <Col 
+                                    className="gutter-row"
+                                    xs={24} sm={24} md={12}
+                                    lg={14} xl={14}>
+                                        <Form.Item
+                                            label="Имя"
+                                            name="first_name"
+                                            rules={[{ required: true, message: 'Введите ваше имя' }]}
+                                        >
+                                            <Input placeholder="Введите ваше имя" size='large'/>
+                                        </Form.Item>
+                                        <Form.Item
+                                            label="Фамилия"
+                                            name="last_name"
+                                            rules={[{ message: 'Введите вашу фамилию' }]}
+                                        >
+                                            <Input placeholder="Введите вашу фамилию" size='large' />
+                                        </Form.Item>
+
+                                        <Form.Item
+                                            label="Почта"
+                                            name="email"
+                                            rules={[{required: true, message: 'Введите вашу почту'}]}
+                                        >
+                                            <Input size='large'/>
+                                        </Form.Item>
+
+                                        <Form.Item
+                                            label="Номер телефона"
+                                            name="phone_number"
+                                        >
+                                            <Input placeholder="Введите номер телефона" size='large'/>
+                                        </Form.Item>
+
+                                        <Form.Item className="m-0">
+                                            <div  style={{ textAlign: 'right' }}>
+                                                <Button type="primary" htmlType="submit" size='large'>
+                                                    Сохранить
+                                                </Button>
+                                            </div>
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+                            </Form>
+                        </Skeleton>
+                    </Col>
+                    <Col
+                        className='gutter-row'
+                        xs={24} sm={24} md={24}
+                        lg={12} xl={12}
+                    >
+                        <UserAdditionalForm cardStyling={cardStyling} initialData={profile}/>
+                    </Col>
+                </Row>
+                
+                <Divider orientation="left">Аутентификация</Divider>
+                <Row 
+                    gutter={[28, 28]}
+                    className="mb-7"
+                >
+                    <Col 
                     className='gutter-row'
                     xs={24} sm={24} md={24}
-                    lg={12} xl={12}
-                >
-                    <Skeleton active="true" loading={showProfileLoading} title="false">
+                    lg={12} xl={12}>
                         <Form
-                            form={changeProfileForm}
+                            form={changePasswordForm}
                             layout="vertical"
-                            onFinish={handleProfileSubmit}
+                            onFinish={onFinish}
                             style={cardStyling}
                             variant='filled'
                         >
-                            <Row
-                            gutter={[24, 24]}
-                            >
-                                <Col 
-                                className="text-center gutter-row"
-                                xs={24} sm={24} md={12}
-                                lg={10} xl={10}>
-                                    <AvatarUploader profileImg={profileImg} borderRadius={themeConfig.token.borderRadius}/>
-                                </Col>
-                                <Col 
-                                className="gutter-row"
-                                xs={24} sm={24} md={12}
-                                lg={14} xl={14}>
-                                    <Form.Item
-                                        label="Имя"
-                                        name="first_name"
-                                        rules={[{ required: true, message: 'Введите ваше имя' }]}
-                                    >
-                                        <Input placeholder="Введите ваше имя" size='large'/>
-                                    </Form.Item>
-                                    <Form.Item
-                                        label="Фамилия"
-                                        name="last_name"
-                                        rules={[{ message: 'Введите вашу фамилию' }]}
-                                    >
-                                        <Input placeholder="Введите вашу фамилию" size='large' />
-                                    </Form.Item>
-
-                                    <Form.Item
-                                        label="Почта"
-                                        name="email"
-                                        rules={[{required: true, message: 'Введите вашу почту'}]}
-                                    >
-                                        <Input size='large'/>
-                                    </Form.Item>
-
-                                    <Form.Item
-                                        label="Номер телефона"
-                                        name="phone_number"
-                                    >
-                                        <Input placeholder="Введите номер телефона" size='large'/>
-                                    </Form.Item>
-
-                                    <Form.Item className="m-0">
-                                        <div  style={{ textAlign: 'right' }}>
-                                            <Button type="primary" htmlType="submit" size='large'>
-                                                Сохранить
-                                            </Button>
-                                        </div>
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                        </Form>
-                    </Skeleton>
-                </Col>
-                <Col
-                    className='gutter-row'
-                    xs={24} sm={24} md={24}
-                    lg={12} xl={12}
-                >
-                    <Skeleton active="true" loading={showProfileLoading} title="false">
-                        <Form
-                            form={changeAdditionalForm}
-                            layout="vertical"
-                            onFinish={handleAdditionalSubmit}
-                            style={cardStyling}
-                            variant='filled'
-                        >
+                            <h3 className="mb-5 text-center font-medium">Изменение пароля</h3>
                             <Form.Item
-                                label= "Дата рождения"
+                                name="old_password"
+                                label="Старый пароль"
+                                rules={[
+                                {
+                                    required: true,
+                                    message: 'Введите старый пароль.',
+                                },
+                                ]}
+                                hasFeedback
                             >
-                                <Space>
-                                    <Form.Item name="birth_date" noStyle>
-                                        <DatePicker placeholder='Укажите дату' className='h-10'></DatePicker>
-                                    </Form.Item>
-                                    
-                                    <Tooltip title="Некоторые встречи имеют возрастное ограничение" placement='right'>
-                                        <QuestionCircleOutlined/>
-                                    </Tooltip>
-                                </Space>
+                                <Input.Password placeholder='Введите старый пароль' size='large'/>
                             </Form.Item>
+
                             <Form.Item
-                                label="Уровень английского языка"
-                                name="english_level"
+                                name="password1"
+                                label="Новый пароль"
+                                rules={[
+                                {
+                                    required: true,
+                                    message: 'Введите новый пароль.',
+                                },
+                                ]}
+                                hasFeedback
                             >
-                                <Select 
-                                    placeholder='Выберете ваш уровень' 
-                                    options={langLevels}
-                                    className='h-10'
-                                />
+                                <Input.Password placeholder='Введите новый пароль' size='large'/>
                             </Form.Item>
-                            <Form.Item label="Локация">
-                                <Space>
-                                    <Space.Compact>
-                                        <Form.Item
-                                            name={['address', 'country']}
-                                            noStyle
-                                        >
-                                            <Select className='h-10' placeholder="Выберете страну" showSearch>
-                                                <Option value="Zhejiang">Zhejiang</Option>
-                                                <Option value="Jiangsu">Jiangsu</Option>
-                                            </Select>
-                                        </Form.Item>
-                                        <Form.Item
-                                            name={['address', 'city']}
-                                            noStyle
-                                        >
-                                        <Select
-                                            style={{
-                                                width: '50%',
-                                            }}
-                                            className='h-10'
-                                            placeholder="Введите город"
-                                        />
-                                        </Form.Item>
-                                    </Space.Compact>
-                                    <Tooltip title="Город необходим для подбора оффлайн встреч" placement='right'>
-                                        <QuestionCircleOutlined/>
-                                    </Tooltip>
-                                </Space>
-                                
+
+                            <Form.Item
+                                name="password2"
+                                label="Новый пароль (подтверждение)"
+                                rules={[
+                                {
+                                    required: true,
+                                    message: 'Введите новый пароль (подтверждение).',
+                                },
+                                ]}
+                                hasFeedback
+                            >
+                                <Input.Password placeholder='Введите новый пароль (подтверждение)' size='large'/>
                             </Form.Item>
+
                             <Form.Item className="m-0">
                                 <div  style={{ textAlign: 'right' }}>
-                                <Button type="primary" htmlType="submit" size='large'>
+                                <Button type="primary" htmlType="submit" className="h-10">
                                     Сохранить
                                 </Button>
                                 </div>
                             </Form.Item>
                         </Form>
-                    </Skeleton>
-                </Col>
-            </Row>
-            
-            <Divider orientation="left">Аутентификация</Divider>
-            <Row 
-                gutter={[28, 28]}
-                className="mb-7"
-            >
-                <Col 
-                className='gutter-row'
-                xs={24} sm={24} md={24}
-                lg={12} xl={12}>
-                    <Form
-                        form={changePasswordForm}
-                        layout="vertical"
-                        onFinish={onFinish}
-                        style={cardStyling}
-                        variant='filled'
-                    >
-                        <h3 className="mb-5 text-center font-medium">Изменение пароля</h3>
-                        <Form.Item
-                            name="old_password"
-                            label="Старый пароль"
-                            rules={[
-                            {
-                                required: true,
-                                message: 'Введите старый пароль.',
-                            },
-                            ]}
-                            hasFeedback
+                    </Col>
+                    <Col 
+                    className='gutter-row'
+                    xs={24} sm={24} md={24}
+                    lg={12} xl={12}>
+                        <Form
+                            form={changeAuthPreferencesForm}
+                            layout="vertical"
+                            onFinish={handleAuthPreferencesSubmit}
+                            style={cardStyling}
+                            variant='filled'
                         >
-                            <Input.Password placeholder='Введите старый пароль' size='large'/>
-                        </Form.Item>
+                            <Form.Item
+                                label="Получать уведомления о входе"
+                                name="notify_login"
+                                layout='horizontal'
+                                valuePropName="checked"
+                            >
+                                <RightSwitch/>
+                            </Form.Item>
 
-                        <Form.Item
-                            name="password1"
-                            label="Новый пароль"
-                            rules={[
-                            {
-                                required: true,
-                                message: 'Введите новый пароль.',
-                            },
-                            ]}
-                            hasFeedback
-                        >
-                            <Input.Password placeholder='Введите новый пароль' size='large'/>
-                        </Form.Item>
+                            <Form.Item
+                                label="Двухфакторная аутентификация"
+                                name="twofa"
+                                layout='horizontal'
+                                valuePropName="checked"
+                            >
+                                <RightSwitch/>
+                            </Form.Item>
+                            <Modal
+                                title={<p>Настройка двухфакторной аутентификации</p>}
+                                loading={loading}
+                                open={open}
+                                onCancel={handleCancel}
+                                cancelText='Отмена'
+                                onOk={handleOk}
+                                okText='Подтвердить'
+                            >
+                                <p>Some contents...</p>
+                                <p>Some contents...</p>
+                                <p>Some contents...</p>
+                            </Modal>
 
-                        <Form.Item
-                            name="password2"
-                            label="Новый пароль (подтверждение)"
-                            rules={[
-                            {
-                                required: true,
-                                message: 'Введите новый пароль (подтверждение).',
-                            },
-                            ]}
-                            hasFeedback
-                        >
-                            <Input.Password placeholder='Введите новый пароль (подтверждение)' size='large'/>
-                        </Form.Item>
-
-                        <Form.Item className="m-0">
-                            <div  style={{ textAlign: 'right' }}>
-                            <Button type="primary" htmlType="submit" className="h-10">
-                                Сохранить
-                            </Button>
-                            </div>
-                        </Form.Item>
-                    </Form>
-                </Col>
-                <Col 
-                className='gutter-row'
-                xs={24} sm={24} md={24}
-                lg={12} xl={12}>
-                    <Form
-                        form={changeAuthPreferencesForm}
-                        layout="vertical"
-                        onFinish={handleAuthPreferencesSubmit}
-                        style={cardStyling}
-                        variant='filled'
-                    >
-                        <Form.Item
-                            label="Получать уведомления о входе"
-                            name="notify_login"
-                            layout='horizontal'
-                            valuePropName="checked"
-                        >
-                            <RightSwitch/>
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Двухфакторная аутентификация"
-                            name="twofa"
-                            layout='horizontal'
-                            valuePropName="checked"
-                        >
-                            <RightSwitch/>
-                        </Form.Item>
-                        <Modal
-                            title={<p>Настройка двухфакторной аутентификации</p>}
-                            loading={loading}
-                            open={open}
-                            onCancel={handleCancel}
-                            cancelText='Отмена'
-                            onOk={handleOk}
-                            okText='Подтвердить'
-                        >
-                            <p>Some contents...</p>
-                            <p>Some contents...</p>
-                            <p>Some contents...</p>
-                        </Modal>
-
-                        <Form.Item className="m-0">
-                            <div  style={{ textAlign: 'right' }}>
-                            <Button type="primary" htmlType="submit" className="h-10">
-                                Сохранить
-                            </Button>
-                            </div>
-                        </Form.Item>
-                    </Form>
-                </Col>
-            </Row>
-        </Space>
+                            <Form.Item className="m-0">
+                                <div  style={{ textAlign: 'right' }}>
+                                <Button type="primary" htmlType="submit" className="h-10">
+                                    Сохранить
+                                </Button>
+                                </div>
+                            </Form.Item>
+                        </Form>
+                    </Col>
+                </Row>
+            </Space>
+        </NotificationProvider>
     </ConfigProvider>
   );
 };

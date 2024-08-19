@@ -1,10 +1,9 @@
 import useAxios from "../utils/UseAxios";
 
-const api = useAxios();
 const countriesURL = '/api/location/countries/';
 const citiesURL = '/api/location/cities/'
 
-export const getCountries = async () => {
+export const getCountries = async (api) => {
     try {
         const response = await api.get(countriesURL);
         return response.data;
@@ -14,7 +13,7 @@ export const getCountries = async () => {
     }
 }
 
-export const getCityById = async (id) => {
+export const getCityById = async (api, id) => {
     try {
         const response = await api.get(citiesURL + `${id}/`);
         return response.data;
