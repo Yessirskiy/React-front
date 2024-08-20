@@ -26,16 +26,22 @@ const UserAdditionalForm = ({ cardStyling, initialData }) => {
             const processed = {
                 birth_date: StringToDate(data.birth_date),
                 english_level: data.english_level,
+                address: {
+                    country: data.country,
+                    city: data.city,
+                }
             }
             return processed;
         }
         return null;
-    }
+    };
 
     const handleSubmit = async (e) => {
         const payload = {
             birth_date: getDateFormatted(e.birth_date),
             english_level: e.english_level,
+            country: e.address.country,
+            city: e.address.city,
         };
         try {
             const data = await updateProfile(api, payload);
@@ -70,11 +76,10 @@ const UserAdditionalForm = ({ cardStyling, initialData }) => {
             });
             setCountries([]);
         }
-    }
+    };
 
-    const onCountrySelect = async (country_id) => {
+    const fetchCities = async (country_id) => {
         setCityLoading(true);
-        setSelectedCountry(country_id);
         try {
             const data = await getCityById(api, country_id);
             const processed = data.map(city => {
@@ -93,11 +98,20 @@ const UserAdditionalForm = ({ cardStyling, initialData }) => {
         } finally {
             setCityLoading(false);
         }
+    };
+
+    const onCountrySelect = async (country_id) => {
+        await fetchCities(country_id);
+        setSelectedCountry(country_id);
     }
 
     useEffect(() => {
-        changeAdditionalForm.setFieldsValue(formatDataValues(initialData));
-        if (initialData) {
+        const processed = formatDataValues(initialData);
+        if (processed) {
+            if (processed.address.country){
+                fetchCities(processed.address.country);
+            }
+            changeAdditionalForm.setFieldsValue(processed);
             setLoading(false);
         }
     }, [initialData]);
