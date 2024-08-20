@@ -10,7 +10,7 @@ import { getDateFormatted, StringToDate } from '../../../utils/DateFormatter';
 import useAxios from '../../../utils/UseAxios';
 
 
-const UserAdditionalForm = ({ cardStyling, initialData }) => {
+const UserAdditionalForm = ({ cardStyling, initialData, apiFeedback }) => {
     const api = useAxios();
     const [changeAdditionalForm] = Form.useForm();
     const {setNotification} = useContext(NotificationContext);
@@ -50,13 +50,14 @@ const UserAdditionalForm = ({ cardStyling, initialData }) => {
                 type: 'success',
                 content: 'Данные профиля обновлены.',
             });
+            apiFeedback(changeAdditionalForm, []);
         } catch (error) {
             setNotification({
                 type: 'error',
                 content: 'Ошибка обновления профиля.',
             });
+            apiFeedback(changeAdditionalForm, error.response?.data);
         }
-        
     };
 
     const fetchCountries = async () => {

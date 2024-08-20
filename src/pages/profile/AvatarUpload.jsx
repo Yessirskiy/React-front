@@ -1,26 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Image, Flex, message, Upload, Button } from 'antd';
 import useAxios from '../../utils/UseAxios';
-
-const beforeUpload = (file) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-  if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!');
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!');
-  }
-  return isJpgOrPng && isLt2M;
-};
-
-const avatarChangeURL = 'api/users/profile/picture/'
+import { updateProfileAvatar, removeProfileAvatar } from '../../api/user';
+import NotificationContext from '../../context/NotificationContext';
 
 const AvatarUploader = ({profileImg, borderRadius}) => {
+  const api = useAxios()
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState(profileImg);
-  const api = useAxios()
+  const { setNotification } = useContext(NotificationContext);
+
+  const beforeUpload = (file) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      setNotification({
+        type: 'error',
+        content: 'Возможно загрузка только JPG или PNG файлов.',
+      });
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      setNotification({
+        type: 'error',
+        content: 'Размер изображения не может превышать 2МБ.',
+      });
+    }
+    return isJpgOrPng && isLt2M;
+  };
 
   const handleChange = ({ file, fileList }) => {
     if (file.status === 'uploading') {
@@ -35,44 +42,35 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
 
   const updateAvatar = async ({ file, onSuccess, onError }) => {
     try {
-        const response = await api.put(
-            avatarChangeURL,
-            { avatar: file },
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
-        );
-
-        if (response.status === 200) {
-            setImageUrl(response.data.avatar);
-            onSuccess(response.data, file);
-        } else {
-            onError(response.statusText);
-        }
+        const data = await updateProfileAvatar(api, file);
+        setImageUrl(data.avatar);
+        onSuccess(data, file);
+        setNotification({
+          type: 'success',
+          content: 'Фотография профиля успешно добавлена.',
+        });
     } catch (error) {
         onError(error);
+        setNotification({
+          type: 'error',
+          content: 'Ошибка обновления фотографии профиля.',
+        });
     }
   };
 
-  const removeAvatar = async (e) => {
-    console.log(e);
+  const removeAvatar = async () => {
     try {
-        const response = await api.delete(
-            avatarChangeURL,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
-        );
-        
-        if (response.status === 200) {
-            setImageUrl(null);
-        } 
+      const response = await removeProfileAvatar(api);
+      setImageUrl(null);
+      setNotification({
+        type: 'success',
+        content: 'Фотография профиля успешно удалена.',
+      });
     } catch (error) {
-        console.log(error);
+      setNotification({
+        type: 'error',
+        content: 'Ошибка удаления фотографии профиля.',
+      });
     }
   }
 

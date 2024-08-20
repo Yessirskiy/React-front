@@ -2,6 +2,7 @@ import useAxios from "../utils/UseAxios";
 
 const profileURL = 'api/users/profile/';
 const authPreferencesURL = 'api/users/preferences/auth/';
+const avatarChangeURL = 'api/users/profile/picture/'
 
 export const getProfile = async (api) => {
     try {
@@ -23,6 +24,34 @@ export const updateProfile = async (api, payload) => {
         return response.data;
     } catch (error) {
         console.log("Error while updating users profile:", error);
+        throw error;
+    }
+}
+
+export const updateProfileAvatar = async (api, file) => {
+    try {
+        const response = await api.put(avatarChangeURL, { avatar: file }, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        }); 
+        return response.data;
+    } catch (error) {
+        console.log("Error while updating users avatar:", error);
+        throw error;
+    }
+}
+
+export const removeProfileAvatar = async (api) => {
+    try {
+        const response = await api.delete(avatarChangeURL, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        }); 
+        return response.data;
+    } catch (error) {
+        console.log("Error while removing users avatar:", error);
         throw error;
     }
 }
