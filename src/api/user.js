@@ -1,5 +1,3 @@
-import useAxios from "../utils/UseAxios";
-
 const profileURL = 'api/users/profile/';
 const allPreferencesURL = 'api/users/preferences/'
 const authPreferencesURL = 'api/users/preferences/auth/';
