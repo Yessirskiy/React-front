@@ -9,8 +9,8 @@ import {
   MoonOutlined,
 } from '@ant-design/icons';
 import { Avatar, Button, Layout, Menu, Breadcrumb, theme, ConfigProvider } from 'antd';
-import UserProfile from "./profile/UserProfilePage.jsx"
-import UserSettings from "../tabs/UserSettings.jsx"
+import UserProfilePage from "./profile/UserProfilePage.jsx"
+import UserSettingsPage from './settings/UserSettingsPage.jsx';
 import AuthContext from '../context/AuthContext.jsx';
 import { Navigate } from 'react-router-dom';
 import useAxios from '../utils/UseAxios.jsx';
@@ -32,13 +32,9 @@ const MainPage = () => {
     algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
     token: {
       colorPrimary: isDarkMode ? '#1677ff' : '#1677ff',
-      // colorPrimary: isDarkMode ? '#76ABAE' : '#4D869C',
       colorBgLayout: isDarkMode ? '#31363F' : '#f5f5f5',
-      // colorBgLayout: isDarkMode ? '#31363F' : '#EEF7FF',
       colorTextBase: isDarkMode ? '#EEEEEE' : '#000000',
-      // colorTextBase: isDarkMode ? '#EEEEEE' : '#000000',
-      colorBgContainer: isDarkMode ? '#222831' : '#ffffff', 
-      // colorBgContainer: isDarkMode ? '#222831' : '#F7F9FB', 
+      colorBgContainer: isDarkMode ? '#222831' : '#ffffff',
       borderRadiusSM: 4,
       borderRadius: 6,
       borderRadiusLG: 8,
@@ -128,9 +124,9 @@ const MainPage = () => {
       case 'meetings_attended':
         return <Tab3 />;
       case 'user_profile':
-        return <UserProfile themeConfig={themeConfig}/>;
+        return <UserProfilePage themeConfig={themeConfig}/>;
       case 'user_settings':
-        return <UserSettings themeConfig={themeConfig}/>;
+        return <UserSettingsPage themeConfig={themeConfig}/>;
       default:
         return <Tab1 />;
     }

@@ -1,24 +1,19 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { NotificationProvider } from '../../context/NotificationContext';
 
-import { Flex, Space, ConfigProvider, message } from 'antd';
-import { Form, Input, Upload, Button, Switch, Image, Modal, DatePicker, Select, Tooltip } from 'antd';
-import { Row, Col, Divider, Skeleton } from 'antd';
-import { UserOutlined, UploadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Space, ConfigProvider, Row, Col, Divider } from 'antd';
+
 import useAxios from '../../utils/UseAxios';
-import AvatarUploader from './AvatarUpload';
-import dayjs from 'dayjs';
+import { getProfile, getAuthPreferences } from '../../api/user';
 
 import UserAdditionalForm from './forms/UserAdditionalForm';
 import UserProfileForm from './forms/UserProfileForm'
 import ChangePasswordForm from './forms/ChangePasswordForm';
 import ChangeAuthPreferencesForm from './forms/ChangeAuthPreferencesForm';
-import { getProfile, getAuthPreferences } from '../../api/user';
+import { NotificationProvider } from '../../context/NotificationContext';
 
-const authPreferencesURL = "api/users/preferences/auth/";
 
-const ProfileForm = ({themeConfig}) => {
+const UserProfilePage = ({themeConfig}) => {
   const [profile, setProfile] = useState(null);
   const [authPreferences, setAuthPreferences] = useState(null);
 
@@ -144,4 +139,4 @@ const ProfileForm = ({themeConfig}) => {
   );
 };
 
-export default ProfileForm;
+export default UserProfilePage;
