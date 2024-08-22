@@ -1,15 +1,16 @@
 import React from 'react';
 import { useEffect, useState, useContext } from 'react';
 
-import { Skeleton, Row, Col, Form, Button, Input } from 'antd';
+import { Skeleton, Row, Col, Form, Button, Input, theme } from 'antd';
 import AvatarUploader from '../AvatarUpload';
 import { updateProfile } from '../../../api/user';
 import NotificationContext from '../../../context/NotificationContext';
 import useAxios from '../../../utils/UseAxios';
 
 
-const UserAdditionalForm = ({ cardStyling, themeConfig, initialData, apiFeedback }) => {
+const UserAdditionalForm = ({ cardStyling, initialData, apiFeedback }) => {
     const api = useAxios();
+    const { token } = theme.useToken();
     const [changeProfileForm] = Form.useForm();
     const [profileImg, setProfileImg] = useState(null);
     const {setNotification} = useContext(NotificationContext);
@@ -81,7 +82,7 @@ const UserAdditionalForm = ({ cardStyling, themeConfig, initialData, apiFeedback
                         xs={24} sm={24} md={12}
                         lg={10} xl={10}
                     >
-                        <AvatarUploader profileImg={profileImg} borderRadius={themeConfig.token.borderRadius}/>
+                        <AvatarUploader profileImg={profileImg} borderRadius={token.borderRadius}/>
                     </Col>
                     <Col 
                         className="gutter-row"

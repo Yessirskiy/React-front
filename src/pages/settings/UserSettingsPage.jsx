@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { NotificationProvider } from '../../context/NotificationContext';
 
-import { Space, ConfigProvider, Divider } from 'antd';
+import { Space, ConfigProvider, Divider, theme } from 'antd';
 
 import NotificationSettingsForm from './forms/NotificationSettingsForm';
 import PrivacySettingsForm from './forms/PrivacySettingsForm';
@@ -12,14 +12,15 @@ import { getAllPreferences } from '../../api/user';
 import useAxios from '../../utils/UseAxios';
 
 
-const UserSettingsPage = ({themeConfig}) => {
+const UserSettingsPage = () => {
     const api = useAxios();
+    const { token } = theme.useToken();
     const [preferences, setPreferences] = useState(null);
 
     const cardStyling = {
         padding: 24,
-        backgroundColor: themeConfig.token.colorBgContainer,
-        borderRadius: themeConfig.token.borderRadiusLG,
+        backgroundColor: token.colorBgContainer,
+        borderRadius: token.borderRadiusLG,
     };
 
     const getPreferences = async () => {
@@ -36,18 +37,16 @@ const UserSettingsPage = ({themeConfig}) => {
     }, []);
 
     return (
-        <ConfigProvider theme={themeConfig}> 
-            <NotificationProvider>
-                <Space className='flex' direction='vertical' size="large">
-                    <Divider orientation="left">Настройки уведомлений</Divider>
-                    <NotificationSettingsForm cardStyling={cardStyling} initialData={preferences}/>
-                    <Divider orientation="left">Настройки конфиденциальности</Divider>
-                    <PrivacySettingsForm cardStyling={cardStyling} initialData={preferences}/>
-                    <Divider orientation="left">Деактивация аккаунта</Divider>
-                    <DeactivateAccountForm cardStyling={cardStyling}/>
-                </Space>
-            </NotificationProvider>
-        </ConfigProvider>
+        <NotificationProvider>
+            <Space className='flex' direction='vertical' size="large">
+                <Divider orientation="left">Настройки уведомлений</Divider>
+                <NotificationSettingsForm cardStyling={cardStyling} initialData={preferences}/>
+                <Divider orientation="left">Настройки конфиденциальности</Divider>
+                <PrivacySettingsForm cardStyling={cardStyling} initialData={preferences}/>
+                <Divider orientation="left">Деактивация аккаунта</Divider>
+                <DeactivateAccountForm cardStyling={cardStyling}/>
+            </Space>
+        </NotificationProvider>
     );
 };
 

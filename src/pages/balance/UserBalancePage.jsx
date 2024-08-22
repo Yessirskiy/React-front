@@ -6,7 +6,7 @@ import { NotificationProvider } from '../../context/NotificationContext';
 
 const { Title } = Typography;
 
-const BalancePage = () => {
+const UserBalancePage = () => {
     return (
         <NotificationProvider className='p-6'>
             <Title level={2}>Баланс</Title>
@@ -25,4 +25,4 @@ const BalancePage = () => {
     );
 };
 
-export default BalancePage;
+export default UserBalancePage;
