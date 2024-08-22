@@ -78,9 +78,7 @@ const UserProfilePage = ({themeConfig}) => {
         <NotificationProvider>
             <Space className='flex' direction='vertical' size="large">
                 <Divider orientation="left">Профиль</Divider>
-                <Row 
-                    gutter={[28, 28]}
-                >
+                <Row gutter={[28, 28]}>
                     <Col 
                         className='gutter-row'
                         xs={24} sm={24} md={24}
