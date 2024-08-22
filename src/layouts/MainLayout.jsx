@@ -7,10 +7,11 @@ import {
   FormOutlined,
   SunOutlined,
   MoonOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons';
 import { Avatar, Button, Layout, Menu, Breadcrumb, theme, ConfigProvider, Flex } from 'antd';
 import AuthContext from '../context/AuthContext.jsx';
-import { Navigate, NavLink } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import useAxios from '../utils/UseAxios.jsx';
 import ProfileContext from '../context/ProfileContext.jsx';
 import { Link } from "react-router-dom";
@@ -18,13 +19,13 @@ import { Link } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
 const MainLayout = ({children}) => {
+    const api = useAxios();
     const {profile} = useContext(ProfileContext);
     let {user, logoutUser} = useContext(AuthContext);
     const [collapsed, setCollapsed] = useState(false);
     const [selectedNav, setSelectedNav] = useState("meetings_new")
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [hello, setHello] = useState("");
-    let api = useAxios();
 
     const toggleTheme = () => {
         setIsDarkMode(!isDarkMode);
@@ -130,23 +131,36 @@ const MainLayout = ({children}) => {
         <ConfigProvider theme={themeConfig}>
         <Layout className='h-screen'>
             <Sider trigger={null} collapsible collapsed={collapsed ? true : undefined} style={{background: themeConfig.token.colorBgContainer}}>
-                <Flex className="m-4 items-center" style={collapsed ? {justifyContent: "center"} : undefined}>
-                    <Avatar
-                    src={profile?.avatar}
-                    shape='square'
-                    size={collapsed ? 40 : 35} // Adjust the size based on collapsed state
-                    icon={<UserOutlined />} // You can replace this with an image src or custom icon
-                    className={collapsed ? 'mr-0' : 'mr-4'}
+                <Flex vertical className='h-full'>
+                    <Flex className="m-4 items-center" style={collapsed ? {justifyContent: "center"} : undefined}>
+                        <Avatar
+                        src={profile?.avatar}
+                        shape='square'
+                        size={collapsed ? 40 : 35} // Adjust the size based on collapsed state
+                        icon={<UserOutlined />} // You can replace this with an image src or custom icon
+                        className={collapsed ? 'mr-0' : 'mr-4'}
+                        />
+                        {!collapsed && (
+                        <span>{profile?.first_name} {profile?.last_name}</span>
+                        )}
+                    </Flex>
+                    <Menu className='m-0' mode="inline"
+                        onClick={onMenuClick}
+                        defaultSelectedKeys={['meetings_new']}
+                        items={menuItems}
                     />
-                    {!collapsed && (
-                    <span>{profile?.first_name} {profile?.last_name}</span>
-                    )}
+                    <div className='mt-auto m-4 flex justify-center'>
+                        <Button 
+                            size='large' 
+                            icon={<LogoutOutlined />} 
+                            iconPosition='end'
+                            className='w-full'
+                            onClick={handleLogout}
+                        >
+                            {collapsed ? '' : 'Выйти'}
+                        </Button>
+                    </div>
                 </Flex>
-                <Menu className='m-0' mode="inline"
-                    onClick={onMenuClick}
-                    defaultSelectedKeys={['meetings_new']}
-                    items={menuItems}
-                />
             </Sider>
             <Layout>
             <Header className='flex items-center gap-3 p-0' style={{background: themeConfig.token.colorBgContainer}}>
@@ -172,7 +186,6 @@ const MainLayout = ({children}) => {
                     height: 64,
                 }}
                 />
-                <Button onClick={handleLogout}/>
                 <p>{hello}</p>
             </Header>
             <Content 
