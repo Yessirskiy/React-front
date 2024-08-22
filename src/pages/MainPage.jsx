@@ -14,6 +14,7 @@ import UserSettingsPage from './settings/UserSettingsPage.jsx';
 import AuthContext from '../context/AuthContext.jsx';
 import { Navigate } from 'react-router-dom';
 import useAxios from '../utils/UseAxios.jsx';
+import BalancePage from './balance/BalancePage.jsx';
 
 
 const { Header, Sider, Content } = Layout;
@@ -125,6 +126,8 @@ const MainPage = () => {
         return <Tab3 />;
       case 'user_profile':
         return <UserProfilePage themeConfig={themeConfig}/>;
+      case 'user_balance':
+        return <BalancePage/>
       case 'user_settings':
         return <UserSettingsPage themeConfig={themeConfig}/>;
       default:

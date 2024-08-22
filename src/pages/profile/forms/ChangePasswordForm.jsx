@@ -17,8 +17,8 @@ const ChangePasswordForm = ({ cardStyling, apiFeedback }) => {
     const { setNotification } = useContext(NotificationContext);
 
     const onFinish = async (e) => {
+        setLoading(true);
         try {
-            setLoading(true);
             const data = await changeUserPassword(api, e);
             setNotification({
                 type: "success",
