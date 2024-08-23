@@ -16,7 +16,7 @@ import ProfileContext from '../../context/ProfileContext';
 
 const UserProfilePage = () => {
     const { token } = theme.useToken();
-    const { profile, setProfile } = useContext(ProfileContext);
+    const { profile, setProfile, getUserProfile } = useContext(ProfileContext);
     const [authPreferences, setAuthPreferences] = useState(null);
 
     const api = useAxios();
@@ -25,15 +25,6 @@ const UserProfilePage = () => {
         padding: 24,
         backgroundColor: token.colorBgContainer,
         borderRadius: token.borderRadiusLG,
-    };
-
-    const getUserProfile = async () => {
-        try {
-            const data = await getProfile(api);
-            setProfile(data);
-        } catch (error) {
-            setProfile(null);
-        }
     };
 
     const getUserAuthPreferences = async () => {
@@ -86,8 +77,7 @@ const UserProfilePage = () => {
                         lg={12} xl={12}
                     >
                         <UserProfileForm 
-                            cardStyling={cardStyling} 
-                            initialData={profile}
+                            cardStyling={cardStyling}
                             apiFeedback={handleApiFeedback}
                         />
                     </Col>
@@ -97,8 +87,7 @@ const UserProfilePage = () => {
                         lg={12} xl={12}
                     >
                         <UserAdditionalForm 
-                            cardStyling={cardStyling} 
-                            initialData={profile}
+                            cardStyling={cardStyling}
                             apiFeedback={handleApiFeedback}
                         />
                     </Col>

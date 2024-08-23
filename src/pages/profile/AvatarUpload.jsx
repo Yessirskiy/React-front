@@ -1,14 +1,15 @@
 import React, { useState, useContext } from 'react';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { Image, Flex, message, Upload, Button } from 'antd';
+import { Upload, Button } from 'antd';
 import useAxios from '../../utils/UseAxios';
 import { updateProfileAvatar, removeProfileAvatar } from '../../api/user';
 import NotificationContext from '../../context/NotificationContext';
+import ProfileContext from '../../context/ProfileContext';
 
 const AvatarUploader = ({profileImg, borderRadius}) => {
   const api = useAxios()
   const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState(profileImg);
+  const { profile, setProfile } = useContext(ProfileContext);
   const { setNotification } = useContext(NotificationContext);
 
   const beforeUpload = (file) => {
@@ -31,7 +32,7 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
 
   const handleChange = ({ file, fileList }) => {
     if (file.status === 'uploading') {
-        setImageUrl(null);
+        setProfile({...profile, avatar: null});
         setLoading(true);
         return;
     }
@@ -43,7 +44,7 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
   const updateAvatar = async ({ file, onSuccess, onError }) => {
     try {
         const data = await updateProfileAvatar(api, file);
-        setImageUrl(data.avatar);
+        setProfile({...profile, avatar: data.avatar});
         onSuccess(data, file);
         setNotification({
           type: 'success',
@@ -60,8 +61,8 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
 
   const removeAvatar = async () => {
     try {
-      const response = await removeProfileAvatar(api);
-      setImageUrl(null);
+      await removeProfileAvatar(api);
+      setProfile({...profile, avatar: null});
       setNotification({
         type: 'success',
         content: 'Фотография профиля успешно удалена.',
@@ -118,9 +119,9 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
             beforeUpload={beforeUpload}
             onChange={handleChange}
         >
-        {imageUrl ? (
+        {profile.avatar ? (
             <img
-            src={imageUrl}
+            src={profile.avatar}
             alt="avatar"
             style={{
                 width: '100%',
@@ -133,7 +134,7 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
             uploadButton
         )}
         </Upload>
-        {imageUrl && (
+        {profile.avatar && (
             <Button className='mt-6' danger size='middle' onClick={removeAvatar}>Удалить</Button>
         )}
     </div>

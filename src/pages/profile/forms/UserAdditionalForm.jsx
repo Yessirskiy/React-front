@@ -8,15 +8,16 @@ import { UserOutlined, UploadOutlined, QuestionCircleOutlined } from '@ant-desig
 import NotificationContext from '../../../context/NotificationContext';
 import { getDateFormatted, StringToDate } from '../../../utils/DateFormatter';
 import useAxios from '../../../utils/UseAxios';
+import ProfileContext from '../../../context/ProfileContext';
 
 
-const UserAdditionalForm = ({ cardStyling, initialData, apiFeedback }) => {
+const UserAdditionalForm = ({ cardStyling, apiFeedback }) => {
     const api = useAxios();
     const [changeAdditionalForm] = Form.useForm();
     const {setNotification} = useContext(NotificationContext);
     const [loading, setLoading] = useState(true);
 
-    const [selectedCountry, setSelectedCountry] = useState(null);
+    const { profile, setProfile } = useContext(ProfileContext);
     const [countries, setCountries] = useState([]);
     const [cities, setCities] = useState([]);
     const [cityLoading, setCityLoading] = useState(false);
@@ -45,7 +46,7 @@ const UserAdditionalForm = ({ cardStyling, initialData, apiFeedback }) => {
         };
         try {
             const data = await updateProfile(api, payload);
-            changeAdditionalForm.setFieldsValue(formatDataValues(data));
+            setProfile(data);
             setNotification({
                 type: 'success',
                 content: 'Данные профиля обновлены.',
@@ -102,32 +103,25 @@ const UserAdditionalForm = ({ cardStyling, initialData, apiFeedback }) => {
     };
 
     const onCountrySelect = async (country_id) => {
-        await fetchCities(country_id);
-        setSelectedCountry(country_id);
+        setProfile({...profile, country: country_id, city: null});
     }
 
     useEffect(() => {
-        const processed = formatDataValues(initialData);
+        const processed = formatDataValues(profile);
         if (processed) {
-            if (processed.address.country){
-                fetchCities(processed.address.country);
-            }
             changeAdditionalForm.setFieldsValue(processed);
             setLoading(false);
         }
-    }, [initialData]);
+    }, [profile]);
+
+    useEffect(() => {
+        if (profile)
+            fetchCities(profile.country);
+    }, [profile?.country]);
 
     useEffect(() => {
         fetchCountries();
     }, []);
-
-    useEffect(() => {
-        changeAdditionalForm.setFieldsValue({
-            address: {
-                city: null,
-            },
-        });
-    }, [selectedCountry]);
 
     const langLevels = [
         {
@@ -203,7 +197,7 @@ const UserAdditionalForm = ({ cardStyling, initialData, apiFeedback }) => {
                                     className='h-10' 
                                     placeholder="Выберете страну" 
                                     showSearch 
-                                    value={selectedCountry}
+                                    value={profile?.country}
                                     onSelect={onCountrySelect}
                                     optionFilterProp="label"
                                     options={countries}>
@@ -219,6 +213,7 @@ const UserAdditionalForm = ({ cardStyling, initialData, apiFeedback }) => {
                                     disabled={cityLoading ? true : undefined}
                                     loading={cityLoading ? true : undefined}
                                     showSearch
+                                    value={profile?.city}
                                     optionFilterProp="label"
                                     options={cities}>
                                 </Select>

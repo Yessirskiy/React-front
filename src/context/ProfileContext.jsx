@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import { getProfile } from "../api/user";
+import { getProfile, getAllPreferences } from "../api/user";
 import useAxios from "../utils/UseAxios";
 
 const ProfileContext = createContext();
@@ -21,7 +21,7 @@ export const ProfileProvider = ({children}) => {
         } finally {
             setProfileLoading(false);
         }
-      };
+    };
 
     useEffect(() => {
         getUserProfile();
@@ -31,6 +31,7 @@ export const ProfileProvider = ({children}) => {
         profile: profile,
         profileLoading: profileLoading,
         setProfile: setProfile,
+        getUserProfile: getUserProfile,
     }
 
     return (

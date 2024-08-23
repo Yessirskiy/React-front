@@ -19,19 +19,21 @@ const useAxios = () => {
         }
     });
 
-    const subscribeTokenRefresh = (callback) => {
+    const subscribeTokenRefresh = (callback, req) => {
+        console.log("Added subscriber", callback, req);
         refreshSubscribers.push(callback);
     };
 
     const onRefreshed = (newAccessToken) => {
+        console.log("just refreshed token, updating", refreshSubscribers, newAccessToken);
         refreshSubscribers.map(callback => callback(newAccessToken));
         refreshSubscribers = [];
     };
 
     axiosInstance.interceptors.request.use(async req => {
         const user = jwtDecode(authTokens.access);
-        const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
-
+        const isExpired = dayjs.unix(user.exp).isBefore(dayjs());
+        // console.log("intercepter", user, isExpired, isRefreshing, refreshSubscribers, req);
         if (!isExpired) return req;
 
         if (!isRefreshing) {
@@ -50,6 +52,7 @@ const useAxios = () => {
 
                 onRefreshed(newAuthTokens.access);
             } catch (error) {
+                console.log("error while refereshing tokens", error);
                 // Handle error, possibly logging out the user
                 return Promise.reject(error);
             } finally {
@@ -61,7 +64,7 @@ const useAxios = () => {
             subscribeTokenRefresh((newAccessToken) => {
                 req.headers['Authorization'] = `Bearer ${newAccessToken}`;
                 resolve(req);
-            });
+            }, req);
         });
     });
 

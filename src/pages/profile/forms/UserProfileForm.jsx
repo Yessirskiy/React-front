@@ -6,13 +6,15 @@ import AvatarUploader from '../AvatarUpload';
 import { updateProfile } from '../../../api/user';
 import NotificationContext from '../../../context/NotificationContext';
 import useAxios from '../../../utils/UseAxios';
+import ProfileContext from '../../../context/ProfileContext';
 
 
-const UserAdditionalForm = ({ cardStyling, initialData, apiFeedback }) => {
+const UserAdditionalForm = ({ cardStyling, apiFeedback }) => {
     const api = useAxios();
     const { token } = theme.useToken();
     const [changeProfileForm] = Form.useForm();
     const [profileImg, setProfileImg] = useState(null);
+    const { profile, setProfile } = useContext(ProfileContext);
     const {setNotification} = useContext(NotificationContext);
     const [loading, setLoading] = useState(true);
 
@@ -41,7 +43,7 @@ const UserAdditionalForm = ({ cardStyling, initialData, apiFeedback }) => {
         };
         try {
             const data = await updateProfile(api, payload);
-            changeProfileForm.setFieldsValue(formatDataValues(data));
+            setProfile(data);
             setNotification({
                 type: 'success',
                 content: 'Данные профиля обновлены.',
@@ -54,16 +56,15 @@ const UserAdditionalForm = ({ cardStyling, initialData, apiFeedback }) => {
             });
             apiFeedback(changeProfileForm, error.response?.data);
         }
-        
     };
 
     useEffect(() => {
-        const processed = formatDataValues(initialData);
+        const processed = formatDataValues(profile);
         if (processed) {
             changeProfileForm.setFieldsValue(processed);
             setLoading(false);
         }
-    }, [initialData]);
+    }, [profile]);
 
     return (
         <Skeleton active="true" loading={loading} title="false">
