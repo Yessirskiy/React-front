@@ -5,7 +5,7 @@ import UserProfilePage from '../pages/profile/UserProfilePage';
 import UserSettingsPage from '../pages/settings/UserSettingsPage';
 import UserBalancePage from '../pages/balance/UserBalancePage';
 import LoginPage from '../pages/auth/LoginPage';
-import AccountRouteWrapper from './accountRouteWrapper';
+import RouteWrapper from './routeWrapper';
 
 const AccountRoutes = () => {
   return (
@@ -13,25 +13,25 @@ const AccountRoutes = () => {
       <Route
         path="/account/profile"
         element={
-          <AccountRouteWrapper>
+          <RouteWrapper>
             <UserProfilePage />
-          </AccountRouteWrapper>
+          </RouteWrapper>
         }
       />
       <Route
         path="/account/balance"
         element={
-          <AccountRouteWrapper>
+          <RouteWrapper>
             <UserBalancePage />
-          </AccountRouteWrapper>
+          </RouteWrapper>
         }
       />
       <Route
         path="/account/settings"
         element={
-          <AccountRouteWrapper>
+          <RouteWrapper>
             <UserSettingsPage />
-          </AccountRouteWrapper>
+          </RouteWrapper>
         }
       />
       <Route path="/login" element={<LoginPage />} />

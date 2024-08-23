@@ -3,7 +3,7 @@ import RequireAuth from './RequireAuth';
 import { ProfileProvider } from '../context/ProfileContext';
 import MainLayout from '../layouts/MainLayout';
 
-const AccountRouteWrapper = ({ children }) => {
+const RouteWrapper = ({ children }) => {
   return (
     <RequireAuth>
       <ProfileProvider>
@@ -15,4 +15,4 @@ const AccountRouteWrapper = ({ children }) => {
   );
 };
 
-export default AccountRouteWrapper;
+export default RouteWrapper;

@@ -9,15 +9,20 @@ import {
   MoonOutlined,
   LogoutOutlined,
 } from '@ant-design/icons';
-import { Avatar, Button, Layout, Menu, Breadcrumb, theme, ConfigProvider, Flex } from 'antd';
+import { Typography, Avatar, Button, Layout, Menu, Breadcrumb, theme, ConfigProvider, Flex } from 'antd';
 import AuthContext from '../context/AuthContext.jsx';
 import { Navigate } from 'react-router-dom';
 import useAxios from '../utils/UseAxios.jsx';
 import ProfileContext from '../context/ProfileContext.jsx';
 import { Link } from "react-router-dom";
+import ruRU from 'antd/locale/ru_RU';
+import dayjs from 'dayjs';
+
+dayjs.locale('ru');
 
 
 const { Header, Sider, Content } = Layout;
+const { Text } = Typography;
 const MainLayout = ({children}) => {
     const api = useAxios();
     const {profile} = useContext(ProfileContext);
@@ -54,9 +59,9 @@ const MainLayout = ({children}) => {
             label: 'Встречи',
             icon: <AppstoreOutlined />,
             children: [
-                { key: 'meetings_new', label: 'Новые'},
-                { key: 'meetings_schedule', label: 'Мое расписание' },
-                { key: 'meetings_attended', label: 'Посещенные' },
+                { key: 'meetings_new', label: <Link to="/meetings/feed">Новости</Link>},
+                { key: 'meetings_schedule', label: <Link to="/meetings/schedule">Мое расписание</Link> },
+                { key: 'meetings_attended', label: <Link to="/meetings/visited">Посещенные</Link> },
                 { key: 'meetings_help', label: 'Помощь' },
             ]
             },
@@ -128,7 +133,7 @@ const MainLayout = ({children}) => {
     }, []);
 
     return (
-        <ConfigProvider theme={themeConfig}>
+        <ConfigProvider theme={themeConfig} locale={ruRU}>
         <Layout className='h-screen'>
             <Sider trigger={null} collapsible collapsed={collapsed ? true : undefined} style={{background: themeConfig.token.colorBgContainer}}>
                 <Flex vertical className='h-full'>
@@ -141,7 +146,7 @@ const MainLayout = ({children}) => {
                         className={collapsed ? 'mr-0' : 'mr-4'}
                         />
                         {!collapsed && (
-                        <span>{profile?.first_name} {profile?.last_name}</span>
+                        <Text>{profile?.first_name} {profile?.last_name}</Text>
                         )}
                     </Flex>
                     <Menu className='m-0' mode="inline"
