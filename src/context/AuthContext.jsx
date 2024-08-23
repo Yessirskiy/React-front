@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import { login, logout } from "../api/auth";
 
 const AuthContext = createContext();
 
@@ -17,29 +18,25 @@ export const AuthProvider = ({children}) => {
     let [loading, setLoading] = useState(true);
 
     let loginUser = async (e) => {
-        let response = await fetch(
-            "http://localhost:8000/api/token/",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({"email": e.target.email.value, "password": e.target.password.value}),
-        });
-        let data = await response.json();
-        if (response.status === 200){
+        try {
+            const data = await login({"email": e.target.email.value, "password": e.target.password.value});
             setAuthTokens(data);
             setUser(jwtDecode(data.access));
-            localStorage.setItem('authTokens', JSON.stringify(data))
-        } else {
-            alert("Something went wrong!");
+            localStorage.setItem('authTokens', JSON.stringify(data));
+        } catch (error) {
+            alert("Error while loggin in.");
         }
     }
 
-    let logoutUser = () => {
-        setAuthTokens(null);
-        setUser(null);
-        localStorage.removeItem("authTokens");
+    let logoutUser = async () => {
+        try {
+            await logout({"refresh": authTokens.refresh});
+            setAuthTokens(null);
+            setUser(null);
+            localStorage.removeItem("authTokens");
+        } catch (error) {
+            console.log("Failed on logout");
+        }
     }
 
     let contextData = {
