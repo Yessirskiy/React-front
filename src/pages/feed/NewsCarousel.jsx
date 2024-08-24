@@ -5,8 +5,6 @@ import { getArticles } from "../../api/news";
 import NotificationContext from "../../context/NotificationContext";
 import dayjs from "dayjs";
 
-
-const { Meta } = Card;
 const { Text } = Typography
 
 const NewsCarousel = () => {
@@ -37,10 +35,9 @@ const NewsCarousel = () => {
     return (
         <Carousel autoplay autoplaySpeed={10000}>
             {cards.map((card) => (
-            <div key={card.id} className="h-full">
+            <div key={card.id} className="h-full mb-7">
                 <Card
                     loading={cardsLoading}
-                    className="mb-6 h-1/2"
                     title={card.title}
                 >
                     <Text className="text-base">{card.description}</Text>

@@ -2,6 +2,8 @@ import React from 'react';
 import { Flex, Row, Col, Statistic, Typography, Divider, Card, Calendar, Badge } from 'antd';
 import { NotificationProvider } from '../../context/NotificationContext';
 import NewsCarousel from './NewsCarousel';
+import BalanceCard from '../balance/BalanceCard';
+import MeetingStatusCard from './MeetingStatusCard';
 
 
 const { Title } = Typography;
@@ -46,7 +48,26 @@ const FeedPage = () => {
                     xs={24} sm={24} md={24}
                     lg={12} xl={16}
                 >
-                    <NewsCarousel/>
+                    <Flex vertical>
+                        <NewsCarousel/>
+                        <Row gutter={28}>
+                            <Col
+                                xs={24} sm={24} md={12}
+                                lg={12} xl={12}
+                            >
+                                <MeetingStatusCard/>
+                            </Col>
+                            <Col
+                                xs={24} sm={24} md={12}
+                                lg={12} xl={12}
+                            >
+                                <BalanceCard/>
+                            </Col>
+                            
+                        </Row>
+                        
+                    </Flex>
+                    
                 </Col>
             </Row>
         </NotificationProvider>
