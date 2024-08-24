@@ -17,6 +17,7 @@ const NewsCarousel = () => {
         setCardsLoading(true);
         try {
             const response = await getArticles(api, 1, 5);
+            console.log(response.results);
             setCards(response.results);
         } catch (error) {
             setNotification({
@@ -50,7 +51,7 @@ const NewsCarousel = () => {
                         {card.is_edited && <Text 
                             className="text-sm text-gray-300"
                         >
-                            Исправлено: {dayjs(card.edit_date).format('YYYY-MM-DD HH:mm:ss')}
+                            Исправлено: {dayjs(card.edited_date).format('YYYY-MM-DD HH:mm:ss')}
                         </Text>}
                     </Flex>
                 </Card>

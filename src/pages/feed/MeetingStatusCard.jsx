@@ -1,12 +1,12 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Statistic, Card } from "antd";
+import { Statistic, Card, Button, Flex } from "antd";
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 
 dayjs.extend(duration);
 
 const { Countdown } = Statistic;
-const deadline = Date.now() + 1000 * 60 * 60 * 24 * 2 + 1000 * 30;
+const deadline = Date.now() + 1000 * 60 * 60 * 24 * 5 + 1000 * 60 * 60 * 5 + 1000 * 30;
 
 function wordform(number, nominative, genitiveSingular, genitivePlural) {
     if (number % 10 === 1 && number % 100 !== 11) {
@@ -44,11 +44,15 @@ const MeetingStatusCard = () => {
 
     return (
         <Card>
-            <Countdown 
+            <Flex gap={16} wrap justify="space-between">
+                <Countdown 
                 title="До ближайшей встречи" 
                 value={deadline} 
                 onChange={handleCountChange}
                 format={formatDate} />
+                <Button>Перейти</Button>
+            </Flex>
+            
         </Card>
     )
 }
