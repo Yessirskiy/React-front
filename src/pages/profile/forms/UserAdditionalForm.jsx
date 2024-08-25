@@ -115,7 +115,7 @@ const UserAdditionalForm = ({ cardStyling, apiFeedback }) => {
     }, [profile]);
 
     useEffect(() => {
-        if (profile)
+        if (profile?.country)
             fetchCities(profile.country);
     }, [profile?.country]);
 

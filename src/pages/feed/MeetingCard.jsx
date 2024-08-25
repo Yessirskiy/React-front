@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Typography, Flex, Divider, Tag, Progress, Avatar } from "antd";
+import { Card, Typography, Flex, Divider, Tag, Progress, Avatar, Tooltip } from "antd";
 import { UserOutlined } from '@ant-design/icons';
 import dayjs from "dayjs";
 
@@ -9,7 +9,7 @@ const conicColors = {
     '0%': '#87d068',
     '50%': '#ffe58f',
     '100%': '#ffccc7',
-  };
+};
 
 const MeetingCard = ({data, loading}) => {
     const { id, title, topic, meeting_date, attendants, max_attendants } = data;
@@ -26,7 +26,7 @@ const MeetingCard = ({data, loading}) => {
                     <h3 className="m-0">{title}</h3>
                     <Text className="text-sm text-gray-300">Состоится {dayjs(meeting_date).format("YYYY-MM-DD HH:mm")}</Text>
                 </div>
-                <Flex wrap gap="4px 0" className='h-fit'>
+                <Flex wrap gap="4px 0" className='h-fit justify-end'>
                     <Tag bordered={false}>{min_english_level}</Tag>
                     <Tag bordered={false}>{is_online ? 'Онлайн' : 'Оффлайн'}</Tag>
                     <Tag bordered={false}>{min_age}+</Tag>
@@ -36,9 +36,11 @@ const MeetingCard = ({data, loading}) => {
             <Flex className="my-2" wrap gap='large' justify="space-between">
                 <Text className="w-2/3">{topic}</Text>
                 <Avatar.Group>
-                    <Avatar size='small' icon={<UserOutlined/>}/>
-                    <Avatar size='small' icon={<UserOutlined/>}/>
-                    <Avatar size='small' icon={<UserOutlined/>}/>
+                    {attendants.map((attendant) => (
+                        <Tooltip title={attendant.user_short.first_name} placement="top">
+                            <Avatar size='small' icon={<UserOutlined/>} src={attendant.user_short.avatar}/>
+                        </Tooltip>
+                    ))}
                 </Avatar.Group>
             </Flex>
             <Progress size='small' percent={attendants.length / max_attendants * 100} showInfo={false}/>
