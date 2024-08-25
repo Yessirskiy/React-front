@@ -38,6 +38,7 @@ const NewsCarousel = () => {
             {cards.map((card) => (
             <div key={card.id} className="h-full mb-7">
                 <Card
+                    bordered={false}
                     loading={cardsLoading}
                     title={card.title}
                 >

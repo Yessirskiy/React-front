@@ -20,12 +20,10 @@ const useAxios = () => {
     });
 
     const subscribeTokenRefresh = (callback, req) => {
-        console.log("Added subscriber", callback, req);
         refreshSubscribers.push(callback);
     };
 
     const onRefreshed = (newAccessToken) => {
-        console.log("just refreshed token, updating", refreshSubscribers, newAccessToken);
         refreshSubscribers.map(callback => callback(newAccessToken));
         refreshSubscribers = [];
     };
@@ -51,6 +49,8 @@ const useAxios = () => {
                 axiosInstance.defaults.headers['Authorization'] = `Bearer ${newAuthTokens.access}`;
 
                 onRefreshed(newAuthTokens.access);
+                req.headers['Authorization'] = `Bearer ${newAuthTokens.access}`;
+                return req;
             } catch (error) {
                 console.log("error while refereshing tokens", error);
                 // Handle error, possibly logging out the user

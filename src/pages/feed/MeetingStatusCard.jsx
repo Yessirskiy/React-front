@@ -43,7 +43,7 @@ const MeetingStatusCard = () => {
     }
 
     return (
-        <Card>
+        <Card bordered={false}>
             <Flex gap={16} wrap justify="space-between">
                 <Countdown 
                 title="До ближайшей встречи" 

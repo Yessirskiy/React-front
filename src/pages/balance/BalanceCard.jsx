@@ -34,7 +34,7 @@ const BalanceCard = () => {
     }, []);
 
     return (
-        <Card loading={balanceLoading}>
+        <Card bordered={false} loading={balanceLoading}>
             <Flex wrap gap='large' justify='space-between'>
                 <Statistic
                     title="Текущий баланс"
