@@ -1,5 +1,5 @@
 const feedURL = 'api/meetings/feed/'
-const overviewURL = 'api/meetings/overview'
+const overviewURL = 'api/meetings/calendar/'
 
 export const getMeetingsFeed = async (api, page, page_size) => {
     try {
@@ -16,7 +16,7 @@ export const getMeetingsFeed = async (api, page, page_size) => {
     }
 }
 
-export const getMeetingsOverview = async (api, start_date, end_date) => {
+export const getMeetingsCalendar = async (api, start_date, end_date) => {
     try {
         const response = await api.get(overviewURL, {
             params: {

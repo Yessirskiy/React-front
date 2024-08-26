@@ -11,7 +11,7 @@ import NewsCarousel from './NewsCarousel';
 import BalanceCard from '../balance/BalanceCard';
 import MeetingCard from './MeetingCard';
 import MeetingStatusCard from './MeetingStatusCard';
-import { getMeetingsFeed, getMeetingsOverview } from '../../api/meetings';
+import { getMeetingsFeed, getMeetingsCalendar } from '../../api/meetings';
 import useAxios from '../../utils/UseAxios';
 import dayjs from 'dayjs';
 
@@ -57,9 +57,9 @@ const FeedPage = () => {
         }
     };
 
-    const getMeetingsCalendar = async () => {
+    const getUserCalendar = async () => {
         try {
-            const data = await getMeetingsOverview(api, dayjs(range.start).format(), dayjs(range.end).format());
+            const data = await getMeetingsCalendar(api, dayjs(range.start).format(), dayjs(range.end).format());
             setMeetingsCalendar(data.meetings);
         } catch (error) {
             console.log("Couldn't load overview");
@@ -85,7 +85,7 @@ const FeedPage = () => {
 
     useEffect(() => {
         if (range.start && range.end)
-            getMeetingsCalendar();
+            getUserCalendar();
     }, [range]);
 
     const onPanelChange = (date, mode) => {
@@ -107,7 +107,7 @@ const FeedPage = () => {
                                 xs={24} sm={24} md={12}
                                 lg={12} xl={12}
                             >
-                                <MeetingStatusCard/>
+                                <MeetingStatusCard meetings={meetingsCalendar}/>
                             </Col>
                             <Col
                                 xs={24} sm={24} md={12}

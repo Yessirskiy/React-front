@@ -2,21 +2,12 @@ import React, { useState, useContext, useEffect } from "react";
 import { Statistic, Card, Button, Flex } from "antd";
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import wordForm from "../../utils/wordForming";
 
 dayjs.extend(duration);
 
 const { Countdown } = Statistic;
-const deadline = Date.now() + 1000 * 60 * 60 * 24 * 5 + 1000 * 60 * 60 * 5 + 1000 * 30;
-
-function wordform(number, nominative, genitiveSingular, genitivePlural) {
-    if (number % 10 === 1 && number % 100 !== 11) {
-      return nominative;
-    } else if (number % 10 >= 2 && number % 10 <= 4 && (number % 100 < 10 || number % 100 >= 20)) {
-      return genitiveSingular;
-    } else {
-      return genitivePlural;
-    }
-}
+// const deadline = Date.now() + 1000 * 60 * 60 * 24 * 5 + 1000 * 60 * 60 * 5 + 1000 * 30;
 
 function formatter(date) {
     const duration = dayjs.duration(date);
@@ -26,26 +17,51 @@ function formatter(date) {
     const minutes = duration.minutes();
     const seconds = duration.seconds();
     if (days > 0) {
-        return `D ${wordform(days, 'день', 'дня', 'дней')} H ${wordform(hours, 'час', 'часа', 'часов')}`;
+        return `D ${wordForm(days, 'день', 'дня', 'дней')} H ${wordForm(hours, 'час', 'часа', 'часов')}`;
     } else if (hours > 0) {
-        return `H ${wordform(hours, 'час', 'часа', 'часов')} m ${wordform(minutes, 'минута', 'минуты', 'минут')}`;
+        return `H ${wordForm(hours, 'час', 'часа', 'часов')} m ${wordForm(minutes, 'минута', 'минуты', 'минут')}`;
     } else {
-        return `m ${wordform(minutes, 'минута', 'минуты', 'минут')} s ${wordform(seconds, 'секунда', 'секунды', 'секунд')}`
+        return `m ${wordForm(minutes, 'минута', 'минуты', 'минут')} s ${wordForm(seconds, 'секунда', 'секунды', 'секунд')}`
     }
 }
 
-const MeetingStatusCard = () => {
+const MeetingStatusCard = ({ meetings }) => {
     const [valueLoading, setValueLoading] = useState(true);
     const [formatDate, setFormatDate] = useState("D H m");
+    const [deadline, setDeadline] = useState(null);
+
+    const getUpcomingMeeting = () => {
+        console.log(meetings);
+        setValueLoading(true);
+        if (!meetings || meetings.length === 0)
+            return;
+        let next_meeting = null;
+        const present = dayjs();
+        console.log(next_meeting, present);
+        meetings.forEach(meeting => {
+            const meeting_date = dayjs(meeting.meeting_start_date);
+            if (meeting_date > present && (!next_meeting || meeting_date < next_meeting)){
+                next_meeting = meeting_date;
+            }
+        });
+        if (next_meeting)
+            setDeadline(next_meeting);
+        setValueLoading(false);
+    };
 
     const handleCountChange = (e) => {
         setFormatDate(formatter(e));
-    }
+    };
+
+    useEffect(() => {
+        getUpcomingMeeting();
+    }, [meetings]);
 
     return (
         <Card bordered={false}>
             <Flex gap={16} wrap justify="space-between">
                 <Countdown 
+                loading={valueLoading}
                 title="До ближайшей встречи" 
                 value={deadline} 
                 onChange={handleCountChange}
