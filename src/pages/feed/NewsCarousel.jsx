@@ -17,7 +17,6 @@ const NewsCarousel = () => {
         setCardsLoading(true);
         try {
             const response = await getArticles(api, 1, 5);
-            console.log(response.results);
             setCards(response.results);
         } catch (error) {
             setNotification({

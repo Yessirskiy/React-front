@@ -2,6 +2,11 @@ import React from "react";
 import { Card, Typography, Flex, Divider, Tag, Progress, Avatar, Tooltip } from "antd";
 import { UserOutlined } from '@ant-design/icons';
 import dayjs from "dayjs";
+import duration from 'dayjs/plugin/duration';
+import wordForm from "../../utils/wordForming";
+
+dayjs.extend(duration);
+
 
 const { Title, Text } = Typography;
 
@@ -11,9 +16,18 @@ const conicColors = {
     '100%': '#ffccc7',
 };
 
+function durationFormat(duration) {
+    if (duration.minutes() === 0) {
+        return `H ${wordForm(duration.hours(), "час", "часа", "часов")}`
+    } else {
+        return `H ${wordForm(duration.hours(), "час", "часа", "часов")} m ${wordForm(duration.minutes(), 'минута', 'минуты', 'минут')}`
+    }
+}
+
 const MeetingCard = ({data, loading}) => {
-    const { id, title, topic, meeting_date, attendants, max_attendants } = data;
+    const { id, title, topic, meeting_start_date, meeting_end_date, attendants, max_attendants } = data;
     const { is_online, min_english_level, min_age } = data;
+    const meeting_duration = dayjs.duration(dayjs(meeting_end_date).diff(dayjs(meeting_start_date)));
 
     const handleClick = async (e) => {
         console.log(id);
@@ -22,10 +36,15 @@ const MeetingCard = ({data, loading}) => {
     return (
         <Card onClick={handleClick} hoverable loading={loading ? true : undefined}>
             <Flex justify="space-between">
-                <div className='mb-2'>
+                <Flex vertical className='mb-2'>
                     <h3 className="m-0">{title}</h3>
-                    <Text className="text-sm text-gray-300">Состоится {dayjs(meeting_date).format("YYYY-MM-DD HH:mm")}</Text>
-                </div>
+                    <Text className="text-sm text-gray-300">
+                    Состоится {dayjs(meeting_start_date).format("YYYY-MM-DD HH:mm")}
+                    </Text>
+                    <Text className="text-sm text-gray-300">
+                    ({meeting_duration.format(durationFormat(meeting_duration))})
+                    </Text>
+                </Flex>
                 <Flex wrap gap="4px 0" className='h-fit justify-end'>
                     <Tag bordered={false}>{min_english_level}</Tag>
                     <Tag bordered={false}>{is_online ? 'Онлайн' : 'Оффлайн'}</Tag>

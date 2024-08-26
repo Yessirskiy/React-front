@@ -5,13 +5,15 @@ import {
     TwitterOutlined,
     YoutubeOutlined
   } from '@ant-design/icons'
+import { Link } from 'react-router-dom';
 import NotificationContext, { NotificationProvider } from '../../context/NotificationContext';
 import NewsCarousel from './NewsCarousel';
 import BalanceCard from '../balance/BalanceCard';
 import MeetingCard from './MeetingCard';
 import MeetingStatusCard from './MeetingStatusCard';
-import { getMeetingsFeed } from '../../api/meetings';
+import { getMeetingsFeed, getMeetingsOverview } from '../../api/meetings';
 import useAxios from '../../utils/UseAxios';
+import dayjs from 'dayjs';
 
 
 const { Title } = Typography;
@@ -20,14 +22,23 @@ const FeedPage = () => {
     const api = useAxios();
     const [meetingCards, setMeetingCards] = useState([]);
     const [meetingsLoading, setMeetingsLoading] = useState(true);
+    const [range, setRange] = useState({ start: null, end: null });
+    const [meetingsCalendar, setMeetingsCalendar] = useState([]);
     // const { setNotification } = useContext(NotificationContext);
  
     const dateCellRender = (date) => {
-        const isMeetingDay = date.$D % 7 == 0;
-    
-        return isMeetingDay ? (
-          <Badge status="success" />
+        const meetingDates = meetingsCalendar.map(meeting => ({
+            id: meeting.id,
+            date: dayjs(meeting.meeting_start_date).format('YYYY-MM-DD')
+        }));
+
+        const meeting = meetingDates.find(meeting => meeting.date === date.format('YYYY-MM-DD'));
+        return meeting ? (
+            <Link to={`/meetings/${meeting.id}`}>
+                <Badge status={dayjs(meeting.date) > dayjs() ? "processing" : "success"} />
+            </Link>
         ) : null;
+
     };
 
     const getFeed = async () => {
@@ -46,9 +57,40 @@ const FeedPage = () => {
         }
     };
 
+    const getMeetingsCalendar = async () => {
+        try {
+            const data = await getMeetingsOverview(api, dayjs(range.start).format(), dayjs(range.end).format());
+            setMeetingsCalendar(data.meetings);
+        } catch (error) {
+            console.log("Couldn't load overview");
+        }
+    }
+
+    const calculateDisplayedRange = (date) => {
+        const startOfMonth = dayjs(date).startOf('month');
+        const endOfMonth = dayjs(date).endOf('month');
+        const startOfCalendar = startOfMonth.startOf('week');
+        const endOfCalendar = endOfMonth.endOf('week').add(8, 'day');
+    
+        setRange({
+          start: startOfCalendar.format('YYYY-MM-DD'),
+          end: endOfCalendar.format('YYYY-MM-DD'),
+        });
+    };
+
     useEffect(() => {
         getFeed();
+        calculateDisplayedRange(dayjs());
     }, []);
+
+    useEffect(() => {
+        if (range.start && range.end)
+            getMeetingsCalendar();
+    }, [range]);
+
+    const onPanelChange = (date, mode) => {
+        calculateDisplayedRange(date);
+    };
     
     return (
         <NotificationProvider className='p-6'>
@@ -110,7 +152,7 @@ const FeedPage = () => {
                                     />
                                 </Flex>
                             </Card>
-                            <Calendar cellRender={dateCellRender} fullscreen={false} />
+                            <Calendar onPanelChange={onPanelChange} cellRender={dateCellRender} fullscreen={false} />
                         </Card>
                         <Card>
                             <Title level={4}>Наши соцсети:</Title>
