@@ -8,6 +8,8 @@ import UserBalancePage from './pages/balance/UserBalancePage';
 import UserSettingsPage from './pages/settings/UserSettingsPage';
 import MeetingsFeedPage from './pages/feed/MeetingsFeedPage';
 import { NotificationProvider } from './context/NotificationContext';
+import MeetingsNewsPage from './pages/news/MeetingsNewsPage';
+import ArticlePage from './pages/news/ArticlePage';
 
 const router = createBrowserRouter([
   {
@@ -39,6 +41,14 @@ const router = createBrowserRouter([
           {
             path: "feed/",
             element: <MeetingsFeedPage/>,
+          },
+          {
+            path: "news/",
+            element: <MeetingsNewsPage/>,
+          },
+          {
+            path: "news/:articleId/",
+            element: <ArticlePage/>
           }
         ]
       }

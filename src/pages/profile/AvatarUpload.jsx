@@ -119,7 +119,7 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
             beforeUpload={beforeUpload}
             onChange={handleChange}
         >
-        {profile.avatar ? (
+        {profile?.avatar ? (
             <img
             src={profile.avatar}
             alt="avatar"
@@ -134,7 +134,7 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
             uploadButton
         )}
         </Upload>
-        {profile.avatar && (
+        {profile?.avatar && (
             <Button className='mt-6' danger size='middle' onClick={removeAvatar}>Удалить</Button>
         )}
     </div>

@@ -35,7 +35,6 @@ const MainLayout = ({children}) => {
     const [hello, setHello] = useState("");
 
     const toggleTheme = () => {
-        console.log("HERE");
         setIsDarkMode(!isDarkMode);
     };
     const themeConfig = {
@@ -62,8 +61,8 @@ const MainLayout = ({children}) => {
             label: 'Встречи',
             icon: <AppstoreOutlined />,
             children: [
-                { key: 'meetings_new', label: <NavLink to="/meetings/feed">Новости</NavLink>},
-                { key: 'meetings_schedule', label: <NavLink to="/meetings/schedule">Мое расписание</NavLink> },
+                { key: 'meetings_feed', label: <NavLink to="/meetings/feed">Лента</NavLink>},
+                { key: 'meetings_news', label: <NavLink to="/meetings/news">Новости</NavLink> },
                 { key: 'meetings_attended', label: <NavLink to="/meetings/visited">Посещенные</NavLink> },
                 { key: 'meetings_help', label: 'Помощь' },
             ]
@@ -100,18 +99,22 @@ const MainLayout = ({children}) => {
         ],
         },
     ]
+
     const getBreadcrumbItems = () => {
         let navs = selectedNav.split("_");
         for (let group of menuItems){
-        for (let subgroup of group.children){
-            if (subgroup.key === navs[0]){
-            for (let groupelem of subgroup.children) {
-                if (selectedNav === groupelem.key) {
-                return [{title: subgroup.label}, {title: groupelem.label}];
+            for (let subgroup of group.children){
+                if (subgroup.key === navs[0]){
+                    for (let groupelem of subgroup.children) {
+                        if (`${navs[0]}_${navs[1]}` === groupelem.key) {
+                            let result = [{title: subgroup.label}, {title: groupelem.label}];
+                            if (navs.length === 3)
+                                result.push({title: navs[2]});
+                            return result;
+                        }
+                    }
                 }
             }
-            }
-        }
         }
         return [];
     }
@@ -122,9 +125,11 @@ const MainLayout = ({children}) => {
 
     useEffect(() => {
         if (location.pathname.includes('/meetings/feed')) {
-            setSelectedNav('meetings_new');
-        } else if (location.pathname.includes('/meetings/schedule')) {
-            setSelectedNav('meetings_schedule');
+            setSelectedNav('meetings_feed');
+        } else if (/^\/meetings\/news\/\d+\/$/.test(location.pathname)) {
+            setSelectedNav(location.state.nav);
+        } else if (location.pathname.includes('/meetings/news')) {
+            setSelectedNav('meetings_news')
         } else if (location.pathname.includes('/meetings/visited')) {
             setSelectedNav('meetings_attended');
         } else if (location.pathname.includes('/account/profile')) {

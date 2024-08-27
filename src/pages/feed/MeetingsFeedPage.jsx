@@ -25,7 +25,7 @@ const MeetingsFeedPage = () => {
     const [range, setRange] = useState({ start: null, end: null });
     const [meetingsCalendar, setMeetingsCalendar] = useState([]);
     const [meetingsOverview, setMeetingsOverview] = useState({attended_count: null, upcoming_count: null});
-    // const { setNotification } = useContext(NotificationContext);
+    const { setNotification } = useContext(NotificationContext);
  
     const dateCellRender = (date) => {
         const meetingDates = meetingsCalendar.map(meeting => ({
@@ -47,14 +47,14 @@ const MeetingsFeedPage = () => {
         try {
             const data = await getMeetingsFeed(api, 1, 10);
             setMeetingCards(data.results);
-        } catch (error) {
-            console.log("Couldn't load cards");
-            // setNotification({
-            //     type: "error",
-            //     content: "Не удалось получить ленту встреч."
-            // });
-        } finally {
             setMeetingsLoading(false);
+        } catch (error) {
+            setNotification({
+                type: "error",
+                content: "Не удалось получить ленту встреч."
+            });
+        } finally {
+            
         }
     };
 
@@ -63,7 +63,10 @@ const MeetingsFeedPage = () => {
             const data = await getMeetingsCalendar(api, dayjs(range.start).format(), dayjs(range.end).format());
             setMeetingsCalendar(data.meetings);
         } catch (error) {
-            console.log("Couldn't load overview");
+            setNotification({
+                type: "error",
+                content: "Не удалось получить календарь ваших встреч."
+            });
         }
     }
 
@@ -72,7 +75,10 @@ const MeetingsFeedPage = () => {
             const data = await getMeetingsOverview(api);
             setMeetingsOverview(data);
         } catch (error) {
-            console.log("ERRor when getting overview");
+            setNotification({
+                type: "error",
+                content: "Не удалось получить обзор встреч."
+            });
         }
     }
 
@@ -168,16 +174,25 @@ const MeetingsFeedPage = () => {
                         <Card>
                             <Title level={4}>Наши соцсети:</Title>
                             
-                            <Flex gap='large'>
-                                <Card bordered={false} className='text-center'>
-                                    <Flex vertical className='align-middle'>
+                            <Flex wrap gap='large' justify='space-even'>
+                                <Card hoverable bordered={false}>
+                                    <Flex vertical className='items-center'>
                                         <InstagramOutlined style={{fontSize: "30px"}}/>
                                         Instagram
                                     </Flex>
                                 </Card>
-                                
-                                <TwitterOutlined style={{fontSize: "30px"}}/>
-                                <YoutubeOutlined style={{fontSize: "30px"}}/>
+                                <Card hoverable bordered={false}>
+                                    <Flex vertical className='items-center'>
+                                        <YoutubeOutlined style={{fontSize: "30px"}}/>
+                                        Youtube
+                                    </Flex>
+                                </Card>
+                                <Card hoverable bordered={false}>
+                                    <Flex vertical className='items-center'>
+                                        <TwitterOutlined style={{fontSize: "30px"}}/>
+                                        Twitter
+                                    </Flex>
+                                </Card>
                             </Flex>
                         </Card>
                     </Flex>

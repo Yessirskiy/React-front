@@ -10,7 +10,7 @@ const { Text } = Typography
 const NewsCarousel = () => {
     const api = useAxios();
     const { setNotification } = useContext(NotificationContext);
-    const [cards, setCards] = useState([]);
+    const [cards, setCards] = useState([<Card/>]);
     const [cardsLoading, setCardsLoading] = useState(true);
 
     const fetchLatestNews = async () => {
@@ -18,13 +18,12 @@ const NewsCarousel = () => {
         try {
             const response = await getArticles(api, 1, 5);
             setCards(response.results);
+            setCardsLoading(false);
         } catch (error) {
             setNotification({
                 type: "error",
                 content: "Не получилось получить новости."
             });
-        } finally {
-            setCardsLoading(false);
         }
     };
 
@@ -46,12 +45,12 @@ const NewsCarousel = () => {
                         <Text 
                             className="text-sm text-gray-300"
                         >
-                            Создано: {dayjs(card.publication_date).format('YYYY-MM-DD HH:mm:ss')}
+                            Создано: {dayjs(card.publication_date).format('YYYY-MM-DD HH:mm')}
                         </Text>
                         {card.is_edited && <Text 
                             className="text-sm text-gray-300"
                         >
-                            Исправлено: {dayjs(card.edited_date).format('YYYY-MM-DD HH:mm:ss')}
+                            Исправлено: {dayjs(card.edited_date).format('YYYY-MM-DD HH:mm')}
                         </Text>}
                     </Flex>
                 </Card>
