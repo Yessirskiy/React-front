@@ -31,13 +31,11 @@ const MeetingStatusCard = ({ meetings }) => {
     const [deadline, setDeadline] = useState(null);
 
     const getUpcomingMeeting = () => {
-        console.log(meetings);
         setValueLoading(true);
         if (!meetings || meetings.length === 0)
             return;
         let next_meeting = null;
         const present = dayjs();
-        console.log(next_meeting, present);
         meetings.forEach(meeting => {
             const meeting_date = dayjs(meeting.meeting_start_date);
             if (meeting_date > present && (!next_meeting || meeting_date < next_meeting)){

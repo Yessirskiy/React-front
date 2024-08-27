@@ -122,16 +122,6 @@ const MainLayout = ({children}) => {
         return <Navigate to="/login"/>;
     }
 
-    const testHello = async () => {
-        let response = await api.get('api/hello');
-        if (response.status === 200)
-            setHello(response.data.message);
-    }
-
-    useEffect(() => {
-        testHello();
-    }, []);
-
     return (
         <ConfigProvider theme={themeConfig} locale={ruRU}>
         <Layout className='h-screen'>
@@ -191,7 +181,6 @@ const MainLayout = ({children}) => {
                     height: 64,
                 }}
                 />
-                <p>{hello}</p>
             </Header>
             <Content 
                 className='m-7 mb-0 h-screen overflow-scroll no-scrollbar'

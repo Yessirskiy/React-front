@@ -1,5 +1,6 @@
 const feedURL = 'api/meetings/feed/'
-const overviewURL = 'api/meetings/calendar/'
+const calendarURL = 'api/meetings/calendar/'
+const overviewURL = 'api/meetings/overview/'
 
 export const getMeetingsFeed = async (api, page, page_size) => {
     try {
@@ -18,7 +19,7 @@ export const getMeetingsFeed = async (api, page, page_size) => {
 
 export const getMeetingsCalendar = async (api, start_date, end_date) => {
     try {
-        const response = await api.get(overviewURL, {
+        const response = await api.get(calendarURL, {
             params: {
                 meeting_start_date: start_date,
                 meeting_end_date: end_date,
@@ -27,6 +28,16 @@ export const getMeetingsCalendar = async (api, start_date, end_date) => {
         return response.data;
     } catch (error) {
         console.log("Error while gettings meeting overview:", error);
+        throw error;
+    }
+}
+
+export const getMeetingsOverview = async (api) => {
+    try {
+        const response = await api.get(overviewURL);
+        return response.data;
+    } catch (error) {
+        console.log("Error while getting meetings overview", error);
         throw error;
     }
 }

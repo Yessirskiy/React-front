@@ -11,7 +11,7 @@ import NewsCarousel from './NewsCarousel';
 import BalanceCard from '../balance/BalanceCard';
 import MeetingCard from './MeetingCard';
 import MeetingStatusCard from './MeetingStatusCard';
-import { getMeetingsFeed, getMeetingsCalendar } from '../../api/meetings';
+import { getMeetingsFeed, getMeetingsCalendar, getMeetingsOverview } from '../../api/meetings';
 import useAxios from '../../utils/UseAxios';
 import dayjs from 'dayjs';
 
@@ -24,6 +24,7 @@ const FeedPage = () => {
     const [meetingsLoading, setMeetingsLoading] = useState(true);
     const [range, setRange] = useState({ start: null, end: null });
     const [meetingsCalendar, setMeetingsCalendar] = useState([]);
+    const [meetingsOverview, setMeetingsOverview] = useState({attended_count: null, upcoming_count: null});
     // const { setNotification } = useContext(NotificationContext);
  
     const dateCellRender = (date) => {
@@ -66,6 +67,15 @@ const FeedPage = () => {
         }
     }
 
+    const getUserOverview = async () => {
+        try {
+            const data = await getMeetingsOverview(api);
+            setMeetingsOverview(data);
+        } catch (error) {
+            console.log("ERRor when getting overview");
+        }
+    }
+
     const calculateDisplayedRange = (date) => {
         const startOfMonth = dayjs(date).startOf('month');
         const endOfMonth = dayjs(date).endOf('month');
@@ -80,6 +90,7 @@ const FeedPage = () => {
 
     useEffect(() => {
         getFeed();
+        getUserOverview();
         calculateDisplayedRange(dayjs());
     }, []);
 
@@ -102,7 +113,7 @@ const FeedPage = () => {
                 >
                     <Flex vertical gap={28}>
                         <NewsCarousel/>
-                        <Row gutter={28}>
+                        <Row gutter={[28, 28]}>
                             <Col
                                 xs={24} sm={24} md={12}
                                 lg={12} xl={12}
@@ -144,11 +155,11 @@ const FeedPage = () => {
                                 <Flex wrap justify='space-between'>
                                     <Statistic
                                         title="Предстоящих встреч"
-                                        value={5}
+                                        value={meetingsOverview.upcoming_count}
                                     />
                                     <Statistic
                                         title="Посещенных встреч"
-                                        value={10}
+                                        value={meetingsOverview.attended_count}
                                     />
                                 </Flex>
                             </Card>
