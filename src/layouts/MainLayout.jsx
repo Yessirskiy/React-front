@@ -11,10 +11,11 @@ import {
 } from '@ant-design/icons';
 import { Typography, Avatar, Button, Layout, Menu, Breadcrumb, theme, ConfigProvider, Flex } from 'antd';
 import AuthContext from '../context/AuthContext.jsx';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import useAxios from '../utils/UseAxios.jsx';
 import ProfileContext from '../context/ProfileContext.jsx';
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { Outlet } from 'react-router-dom';
 import ruRU from 'antd/locale/ru_RU';
 import dayjs from 'dayjs';
 
@@ -30,9 +31,11 @@ const MainLayout = ({children}) => {
     const [collapsed, setCollapsed] = useState(false);
     const [selectedNav, setSelectedNav] = useState("meetings_new")
     const [isDarkMode, setIsDarkMode] = useState(false);
+    let location = useLocation();
     const [hello, setHello] = useState("");
 
     const toggleTheme = () => {
+        console.log("HERE");
         setIsDarkMode(!isDarkMode);
     };
     const themeConfig = {
@@ -59,9 +62,9 @@ const MainLayout = ({children}) => {
             label: 'Встречи',
             icon: <AppstoreOutlined />,
             children: [
-                { key: 'meetings_new', label: <Link to="/meetings/feed">Новости</Link>},
-                { key: 'meetings_schedule', label: <Link to="/meetings/schedule">Мое расписание</Link> },
-                { key: 'meetings_attended', label: <Link to="/meetings/visited">Посещенные</Link> },
+                { key: 'meetings_new', label: <NavLink to="/meetings/feed">Новости</NavLink>},
+                { key: 'meetings_schedule', label: <NavLink to="/meetings/schedule">Мое расписание</NavLink> },
+                { key: 'meetings_attended', label: <NavLink to="/meetings/visited">Посещенные</NavLink> },
                 { key: 'meetings_help', label: 'Помощь' },
             ]
             },
@@ -88,9 +91,9 @@ const MainLayout = ({children}) => {
             label: 'Аккаунт',
             icon: <UserOutlined />,
             children: [
-                { key: 'user_profile', label: <Link to="/account/profile">Профиль</Link>},
-                { key: 'user_balance', label: <Link to="/account/balance">Баланс</Link>},
-                { key: 'user_settings', label: <Link to="/account/settings">Настройки</Link> },
+                { key: 'user_profile', label: <NavLink to="/account/profile">Профиль</NavLink>},
+                { key: 'user_balance', label: <NavLink to="/account/balance">Баланс</NavLink>},
+                { key: 'user_settings', label: <NavLink to="/account/settings">Настройки</NavLink> },
                 { key: 'user_help', label: 'Помощь' },
             ]
             },
@@ -117,6 +120,24 @@ const MainLayout = ({children}) => {
         setSelectedNav(e.key);
     };
 
+    useEffect(() => {
+        if (location.pathname.includes('/meetings/feed')) {
+            setSelectedNav('meetings_new');
+        } else if (location.pathname.includes('/meetings/schedule')) {
+            setSelectedNav('meetings_schedule');
+        } else if (location.pathname.includes('/meetings/visited')) {
+            setSelectedNav('meetings_attended');
+        } else if (location.pathname.includes('/account/profile')) {
+            setSelectedNav('user_profile');
+        } else if (location.pathname.includes('/account/balance')) {
+            setSelectedNav('user_balance');
+        } else if (location.pathname.includes('/account/settings')) {
+            setSelectedNav('user_settings');
+        } else {
+            setSelectedNav('');
+        }
+    }, [location.pathname]);
+
     const handleLogout = (e) => {
         logoutUser();
         return <Navigate to="/login"/>;
@@ -124,71 +145,71 @@ const MainLayout = ({children}) => {
 
     return (
         <ConfigProvider theme={themeConfig} locale={ruRU}>
-        <Layout className='h-screen'>
-            <Sider trigger={null} collapsible collapsed={collapsed ? true : undefined} style={{background: themeConfig.token.colorBgContainer}}>
-                <Flex vertical className='h-full'>
-                    <Flex className="m-4 items-center" style={collapsed ? {justifyContent: "center"} : undefined}>
-                        <Avatar
-                        src={profile?.avatar}
-                        shape='square'
-                        size={collapsed ? 40 : 35} // Adjust the size based on collapsed state
-                        icon={<UserOutlined />} // You can replace this with an image src or custom icon
-                        className={collapsed ? 'mr-0' : 'mr-4'}
+            <Layout className='h-screen'>
+                <Sider trigger={null} collapsible collapsed={collapsed ? true : undefined} style={{background: themeConfig.token.colorBgContainer}}>
+                    <Flex vertical className='h-full'>
+                        <Flex className="m-4 items-center" style={collapsed ? {justifyContent: "center"} : undefined}>
+                            <Avatar
+                            src={profile?.avatar}
+                            shape='square'
+                            size={collapsed ? 40 : 35}
+                            icon={<UserOutlined />}
+                            className={collapsed ? 'mr-0' : 'mr-4'}
+                            />
+                            {!collapsed && (
+                            <Text>{profile?.first_name} {profile?.last_name}</Text>
+                            )}
+                        </Flex>
+                        <Menu className='m-0' mode="inline"
+                            onClick={onMenuClick}
+                            selectedKeys={[selectedNav]}
+                            items={menuItems}
                         />
-                        {!collapsed && (
-                        <Text>{profile?.first_name} {profile?.last_name}</Text>
-                        )}
+                        <div className='mt-auto m-4 flex justify-center'>
+                            <Button 
+                                size='large' 
+                                icon={<LogoutOutlined />} 
+                                iconPosition='end'
+                                className='w-full'
+                                onClick={handleLogout}
+                            >
+                                {collapsed ? '' : 'Выйти'}
+                            </Button>
+                        </div>
                     </Flex>
-                    <Menu className='m-0' mode="inline"
-                        onClick={onMenuClick}
-                        defaultSelectedKeys={['meetings_new']}
-                        items={menuItems}
+                </Sider>
+                <Layout>
+                <Header className='flex items-center gap-3 p-0' style={{background: themeConfig.token.colorBgContainer}}>
+                    <Button
+                        type="text"
+                        icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                        onClick={() => setCollapsed(!collapsed)}
+                        style={{
+                            fontSize: '16px',
+                            width: 64,
+                            height: 64,
+                        }}
                     />
-                    <div className='mt-auto m-4 flex justify-center'>
-                        <Button 
-                            size='large' 
-                            icon={<LogoutOutlined />} 
-                            iconPosition='end'
-                            className='w-full'
-                            onClick={handleLogout}
-                        >
-                            {collapsed ? '' : 'Выйти'}
-                        </Button>
-                    </div>
-                </Flex>
-            </Sider>
-            <Layout>
-            <Header className='flex items-center gap-3 p-0' style={{background: themeConfig.token.colorBgContainer}}>
-                <Button
-                type="text"
-                icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                onClick={() => setCollapsed(!collapsed)}
-                style={{
-                    fontSize: '16px',
-                    width: 64,
-                    height: 64,
-                }}
-                />
-                <Breadcrumb items={getBreadcrumbItems()}>
-                </Breadcrumb>
-                <Button
-                type="text"
-                icon={isDarkMode ? <MoonOutlined /> : <SunOutlined />}
-                onClick={toggleTheme}
-                style={{
-                    fontSize: '16px',
-                    width: 64,
-                    height: 64,
-                }}
-                />
-            </Header>
-            <Content 
-                className='m-7 mb-0 h-screen overflow-scroll no-scrollbar'
-            >
-                {children}
-            </Content>
+                    <Breadcrumb items={getBreadcrumbItems()}>
+                    </Breadcrumb>
+                    <Button
+                        type="text"
+                        icon={isDarkMode ? <MoonOutlined /> : <SunOutlined />}
+                        onClick={toggleTheme}
+                        style={{
+                            fontSize: '16px',
+                            width: 64,
+                            height: 64,
+                        }}
+                    />
+                </Header>
+                <Content 
+                    className='m-7 mb-0 h-screen overflow-scroll no-scrollbar'
+                >
+                    <Outlet/>
+                </Content>
+                </Layout>
             </Layout>
-        </Layout>
         </ConfigProvider>
     );
 };

@@ -8,7 +8,7 @@ const { Title } = Typography;
 
 const UserBalancePage = () => {
     return (
-        <NotificationProvider className='p-6'>
+        <div className='p-6'>
             <Title level={2}>Баланс</Title>
             <Row gutter={[28, 28]} className='mb-6'>
                 <Col 
@@ -21,7 +21,7 @@ const UserBalancePage = () => {
             </Row>
             <Divider />
             <TransactionsTable/>
-        </NotificationProvider>
+        </div>
     );
 };
 

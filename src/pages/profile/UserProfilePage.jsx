@@ -66,62 +66,60 @@ const UserProfilePage = () => {
         }
     };
 
-    return (  
-        <NotificationProvider>
-            <Space className='flex' direction='vertical' size="large">
-                <Divider orientation="left">Профиль</Divider>
-                <Row gutter={[28, 28]}>
-                    <Col 
-                        className='gutter-row'
-                        xs={24} sm={24} md={24}
-                        lg={12} xl={12}
-                    >
-                        <UserProfileForm 
-                            cardStyling={cardStyling}
-                            apiFeedback={handleApiFeedback}
-                        />
-                    </Col>
-                    <Col
-                        className='gutter-row'
-                        xs={24} sm={24} md={24}
-                        lg={12} xl={12}
-                    >
-                        <UserAdditionalForm 
-                            cardStyling={cardStyling}
-                            apiFeedback={handleApiFeedback}
-                        />
-                    </Col>
-                </Row>
-                
-                <Divider orientation="left">Аутентификация</Divider>
-                <Row 
-                    gutter={[28, 28]}
-                    className="mb-7"
+    return ( 
+        <Space className='flex' direction='vertical' size="large">
+            <Divider orientation="left">Профиль</Divider>
+            <Row gutter={[28, 28]}>
+                <Col 
+                    className='gutter-row'
+                    xs={24} sm={24} md={24}
+                    lg={12} xl={12}
                 >
-                    <Col 
-                        className='gutter-row'
-                        xs={24} sm={24} md={24}
-                        lg={12} xl={12}
-                    >
-                        <ChangePasswordForm 
-                            cardStyling={cardStyling}
-                            apiFeedback={handleApiFeedback}
-                        />
-                    </Col>
-                    <Col 
-                        className='gutter-row'
-                        xs={24} sm={24} md={24}
-                        lg={12} xl={12}
-                    >
-                        <ChangeAuthPreferencesForm 
-                            cardStyling={cardStyling} 
-                            initialData={authPreferences} 
-                            apiFeedback={handleApiFeedback}
-                        />
-                    </Col>
-                </Row>
-            </Space>
-        </NotificationProvider>
+                    <UserProfileForm 
+                        cardStyling={cardStyling}
+                        apiFeedback={handleApiFeedback}
+                    />
+                </Col>
+                <Col
+                    className='gutter-row'
+                    xs={24} sm={24} md={24}
+                    lg={12} xl={12}
+                >
+                    <UserAdditionalForm 
+                        cardStyling={cardStyling}
+                        apiFeedback={handleApiFeedback}
+                    />
+                </Col>
+            </Row>
+            
+            <Divider orientation="left">Аутентификация</Divider>
+            <Row 
+                gutter={[28, 28]}
+                className="mb-7"
+            >
+                <Col 
+                    className='gutter-row'
+                    xs={24} sm={24} md={24}
+                    lg={12} xl={12}
+                >
+                    <ChangePasswordForm 
+                        cardStyling={cardStyling}
+                        apiFeedback={handleApiFeedback}
+                    />
+                </Col>
+                <Col 
+                    className='gutter-row'
+                    xs={24} sm={24} md={24}
+                    lg={12} xl={12}
+                >
+                    <ChangeAuthPreferencesForm 
+                        cardStyling={cardStyling} 
+                        initialData={authPreferences} 
+                        apiFeedback={handleApiFeedback}
+                    />
+                </Col>
+            </Row>
+        </Space>
     );
 };
 

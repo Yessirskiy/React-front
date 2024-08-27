@@ -37,16 +37,14 @@ const UserSettingsPage = () => {
     }, []);
 
     return (
-        <NotificationProvider>
-            <Space className='flex' direction='vertical' size="large">
-                <Divider orientation="left">Настройки уведомлений</Divider>
-                <NotificationSettingsForm cardStyling={cardStyling} initialData={preferences}/>
-                <Divider orientation="left">Настройки конфиденциальности</Divider>
-                <PrivacySettingsForm cardStyling={cardStyling} initialData={preferences}/>
-                <Divider orientation="left">Деактивация аккаунта</Divider>
-                <DeactivateAccountForm cardStyling={cardStyling}/>
-            </Space>
-        </NotificationProvider>
+        <Space className='flex' direction='vertical' size="large">
+            <Divider orientation="left">Настройки уведомлений</Divider>
+            <NotificationSettingsForm cardStyling={cardStyling} initialData={preferences}/>
+            <Divider orientation="left">Настройки конфиденциальности</Divider>
+            <PrivacySettingsForm cardStyling={cardStyling} initialData={preferences}/>
+            <Divider orientation="left">Деактивация аккаунта</Divider>
+            <DeactivateAccountForm cardStyling={cardStyling}/>
+        </Space>
     );
 };
 

@@ -18,7 +18,7 @@ import dayjs from 'dayjs';
 
 const { Title } = Typography;
 
-const FeedPage = () => {
+const MeetingsFeedPage = () => {
     const api = useAxios();
     const [meetingCards, setMeetingCards] = useState([]);
     const [meetingsLoading, setMeetingsLoading] = useState(true);
@@ -104,7 +104,7 @@ const FeedPage = () => {
     };
     
     return (
-        <NotificationProvider className='p-6'>
+        <div className='p-6'>
             <Row gutter={[28, 28]}>
             <Col
                     className='gutter-row'
@@ -183,8 +183,8 @@ const FeedPage = () => {
                     </Flex>
                 </Col>
             </Row>
-        </NotificationProvider>
+        </div>
     );
 };
 
-export default FeedPage;
+export default MeetingsFeedPage;

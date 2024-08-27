@@ -1,14 +1,60 @@
 import React from 'react';
 import { AuthProvider } from './context/AuthContext';
-import AccountRoutes from './utils/accountRoutes';
-import MeetingsRoutes from './utils/meetingsRoutes';
+import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
+import MainLayout from './layouts/MainLayout';
+import { ProfileProvider } from './context/ProfileContext';
+import UserProfilePage from './pages/profile/UserProfilePage';
+import UserBalancePage from './pages/balance/UserBalancePage';
+import UserSettingsPage from './pages/settings/UserSettingsPage';
+import MeetingsFeedPage from './pages/feed/MeetingsFeedPage';
+import { NotificationProvider } from './context/NotificationContext';
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <MainLayout/>,
+    children: [
+      {
+        path: "account/",
+        element: <Outlet/>,
+        children: [
+          {
+            path: "profile/",
+            element: <UserProfilePage/>,
+          },
+          {
+            path: "balance/",
+            element: <UserBalancePage/>,
+          },
+          {
+            path: "settings/",
+            element: <UserSettingsPage/>,
+          }
+        ]
+      },
+      {
+        path: "meetings/",
+        element: <Outlet/>,
+        children: [
+          {
+            path: "feed/",
+            element: <MeetingsFeedPage/>,
+          }
+        ]
+      }
+    ]
+  }
+])
 
 const App = () => {
   return (
     <div className="App">
       <AuthProvider>
-        <AccountRoutes/>
-        <MeetingsRoutes/>
+        <NotificationProvider>
+          <ProfileProvider>
+            <RouterProvider router={router}/>
+          </ProfileProvider>
+        </NotificationProvider>
       </AuthProvider>   
     </div>
   );
