@@ -1,5 +1,5 @@
 import React from "react";
-import { Tabs, Input, Flex } from 'antd';
+import { Tabs, Input, Flex} from 'antd';
 import NewsLayout from "./NewsLayout";
 
 const items = [

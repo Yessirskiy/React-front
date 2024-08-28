@@ -24,7 +24,13 @@ const MeetingsFeedPage = () => {
     const [meetingsLoading, setMeetingsLoading] = useState(true);
     const [range, setRange] = useState({ start: null, end: null });
     const [meetingsCalendar, setMeetingsCalendar] = useState([]);
-    const [meetingsOverview, setMeetingsOverview] = useState({attended_count: null, upcoming_count: null});
+    const [meetingsOverview, setMeetingsOverview] = useState({
+        attended_count: null, 
+        upcoming_count: null, 
+        prev_meeting: null,
+        is_prev_reviewed: null,
+        next_meeting: null
+    });
     const { setNotification } = useContext(NotificationContext);
  
     const dateCellRender = (date) => {
@@ -124,7 +130,11 @@ const MeetingsFeedPage = () => {
                                 xs={24} sm={24} md={12}
                                 lg={12} xl={12}
                             >
-                                <MeetingStatusCard meetings={meetingsCalendar}/>
+                                <MeetingStatusCard 
+                                    prev_meeting={meetingsOverview.prev_meeting}
+                                    is_prev_reviewed={meetingsOverview.is_prev_reviewed}
+                                    next_meeting={meetingsOverview.next_meeting}
+                                />
                             </Col>
                             <Col
                                 xs={24} sm={24} md={12}
@@ -174,7 +184,7 @@ const MeetingsFeedPage = () => {
                         <Card>
                             <Title level={4}>Наши соцсети:</Title>
                             
-                            <Flex wrap gap='large' justify='space-even'>
+                            <Flex wrap gap='large' justify='space-around'>
                                 <Card hoverable bordered={false}>
                                     <Flex vertical className='items-center'>
                                         <InstagramOutlined style={{fontSize: "30px"}}/>

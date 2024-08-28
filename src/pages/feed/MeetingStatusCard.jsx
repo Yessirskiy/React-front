@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Statistic, Card, Button, Flex } from "antd";
+import { Statistic, Card, Button, Flex, Rate } from "antd";
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import wordForm from "../../utils/wordForming";
@@ -25,46 +25,55 @@ function formatter(date) {
     }
 }
 
-const MeetingStatusCard = ({ meetings }) => {
+const MeetingStatusCard = ({ meetings, next_meeting, is_prev_reviewed, prev_meeting }) => {
     const [valueLoading, setValueLoading] = useState(true);
     const [formatDate, setFormatDate] = useState("D H m");
-    const [deadline, setDeadline] = useState(null);
-
-    const getUpcomingMeeting = () => {
-        setValueLoading(true);
-        if (!meetings || meetings.length === 0)
-            return;
-        let next_meeting = null;
-        const present = dayjs();
-        meetings.forEach(meeting => {
-            const meeting_date = dayjs(meeting.meeting_start_date);
-            if (meeting_date > present && (!next_meeting || meeting_date < next_meeting)){
-                next_meeting = meeting_date;
-            }
-        });
-        if (next_meeting)
-            setDeadline(next_meeting);
-        setValueLoading(false);
-    };
+    const [element, setElement] = useState(<>
+        <Statistic
+            title="Вам доступно более"
+            value={`${12} встреч`}
+        />
+        <Button>К встречам</Button>
+    </>);
 
     const handleCountChange = (e) => {
         setFormatDate(formatter(e));
     };
 
     useEffect(() => {
-        getUpcomingMeeting();
-    }, [meetings]);
+        if (is_prev_reviewed && next_meeting) {
+            setElement(
+            <>
+                <Countdown 
+                    loading={valueLoading}
+                    title="До ближайшей встречи" 
+                    value={deadline} 
+                    onChange={handleCountChange}
+                    format={formatDate} 
+                />
+                <Button>Перейти</Button>
+            </>);
+        } else if (!is_prev_reviewed && prev_meeting) {
+            setElement(
+                <>
+                <Statistic
+                    title="Оцените прошлую встречу"
+                    value={prev_meeting.title}
+                />
+                <Rate defaultValue={4} onChange={handleRateChange}/>
+                </>
+            );
+        }
+    }, [next_meeting, is_prev_reviewed, prev_meeting]);
+    
+    const handleRateChange = async (v) => {
+        console.log(v)
+    }
 
     return (
         <Card bordered={false}>
             <Flex gap={16} wrap justify="space-between">
-                <Countdown 
-                loading={valueLoading}
-                title="До ближайшей встречи" 
-                value={deadline} 
-                onChange={handleCountChange}
-                format={formatDate} />
-                <Button>Перейти</Button>
+                {element}
             </Flex>
             
         </Card>

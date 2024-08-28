@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Typography, Row, Col, Divider } from "antd";
+import { Typography, Row, Col, Divider, Skeleton } from "antd";
 import useAxios from "../../utils/UseAxios";
 import NotificationContext from "../../context/NotificationContext";
 import { getArticle } from "../../api/news";
