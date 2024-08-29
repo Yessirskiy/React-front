@@ -7,12 +7,6 @@ import useAxios from "../../utils/UseAxios";
 import NotificationContext from "../../context/NotificationContext";
 import dayjs from "dayjs";
 
-const IconText = ({ icon, text }) => (
-    <Space>
-      {React.createElement(icon)}
-      {text}
-    </Space>
-  );
 
 const { Text } = Typography;
 
@@ -81,18 +75,18 @@ const NewsLayout = ({filter}) => {
                 >
                     <List.Item.Meta
                         avatar={<Avatar src={item.avatar} />}
-                        title={<Link state={{nav: `meetings_news_${item.title}`}} to={`/meetings/news/${item.id}/`}>{item.title}</Link>}
+                        title={<Link state={{name: item.title}} to={`/meetings/news/${item.id}`}>{item.title}</Link>}
                         description={
                             <div className="flex flex-col">
                                 <p>{item?.description}</p>
-                                <Link state={{nav: `meetings_news_${item.title}`}} to={`/meetings/news/${item.id}/`}>Открыть</Link>
+                                <Link state={{name: item.title}} to={`/meetings/news/${item.id}`}>Открыть</Link>
                             </div>
                         }
                     />
                 </List.Item> 
                 ) : (
                     <>
-                        <Skeleton className="mb-5"  active avatar title paragraph={{ rows: 2 }} />
+                        <Skeleton className="mb-5" active avatar title paragraph={{ rows: 2 }} />
                         <Divider/>
                     </>
                 )

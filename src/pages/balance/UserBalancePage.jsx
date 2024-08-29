@@ -8,7 +8,7 @@ const { Title } = Typography;
 
 const UserBalancePage = () => {
     return (
-        <div className='p-6'>
+        <div>
             <Title level={2}>Баланс</Title>
             <Row gutter={[28, 28]} className='mb-6'>
                 <Col 

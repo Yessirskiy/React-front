@@ -14,7 +14,7 @@ import AuthContext from '../context/AuthContext.jsx';
 import { Navigate, useLocation } from 'react-router-dom';
 import useAxios from '../utils/UseAxios.jsx';
 import ProfileContext from '../context/ProfileContext.jsx';
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { Outlet } from 'react-router-dom';
 import ruRU from 'antd/locale/ru_RU';
 import dayjs from 'dayjs';
@@ -99,24 +99,30 @@ const MainLayout = ({children}) => {
         ],
         },
     ]
+    const breadcrumbDummies = {
+        "meetings": <NavLink to="/meetings">Встречи</NavLink>,
+        "feed": <NavLink to="/meetings/feed">Лента</NavLink>,
+        "news": <NavLink to="/meetings/news">Новости</NavLink>,
+        "account": <NavLink to="/account">Аккаунт</NavLink>,
+        "profile": <NavLink to="/account/profile">Профиль</NavLink>,
+        "balance": <NavLink to="/account/balance">Баланс</NavLink>,
+        "settings": <NavLink to="/account/settings">Настройки</NavLink>,
+    };
 
     const getBreadcrumbItems = () => {
-        let navs = selectedNav.split("_");
-        for (let group of menuItems){
-            for (let subgroup of group.children){
-                if (subgroup.key === navs[0]){
-                    for (let groupelem of subgroup.children) {
-                        if (`${navs[0]}_${navs[1]}` === groupelem.key) {
-                            let result = [{title: subgroup.label}, {title: groupelem.label}];
-                            if (navs.length === 3)
-                                result.push({title: navs[2]});
-                            return result;
-                        }
-                    }
-                }
-            }
+        let navs = location.pathname.slice(1).split("/");
+        let result = [];
+        for (let nav of navs){
+            result.push({title: breadcrumbDummies[nav]})
         }
-        return [];
+        if (/^\/meetings\/news\/\d+$/.test(location.pathname)){
+            result.pop()
+            if (location.state?.name)
+                result.push({title:<Link state={{name: location.state.name}} to={location.pathname}>{location.state.name}</Link>})
+            else 
+                result.push({title: <Link to={location.pathname}>{navs[2]}</Link>})
+        }
+        return result;
     }
 
     const onMenuClick = (e) => {
@@ -126,8 +132,6 @@ const MainLayout = ({children}) => {
     useEffect(() => {
         if (location.pathname.includes('/meetings/feed')) {
             setSelectedNav('meetings_feed');
-        } else if (/^\/meetings\/news\/\d+\/$/.test(location.pathname)) {
-            setSelectedNav(location.state.nav);
         } else if (location.pathname.includes('/meetings/news')) {
             setSelectedNav('meetings_news')
         } else if (location.pathname.includes('/meetings/visited')) {
@@ -155,14 +159,14 @@ const MainLayout = ({children}) => {
                     <Flex vertical className='h-full'>
                         <Flex className="m-4 items-center" style={collapsed ? {justifyContent: "center"} : undefined}>
                             <Avatar
-                            src={profile?.avatar}
-                            shape='square'
-                            size={collapsed ? 40 : 35}
-                            icon={<UserOutlined />}
-                            className={collapsed ? 'mr-0' : 'mr-4'}
+                                src={profile?.avatar}
+                                shape='square'
+                                size={collapsed ? 40 : 35}
+                                icon={<UserOutlined />}
+                                className={collapsed ? 'mr-0' : 'mr-4'}
                             />
                             {!collapsed && (
-                            <Text>{profile?.first_name} {profile?.last_name}</Text>
+                                <Text>{profile?.first_name} {profile?.last_name}</Text>
                             )}
                         </Flex>
                         <Menu className='m-0' mode="inline"
@@ -195,8 +199,7 @@ const MainLayout = ({children}) => {
                             height: 64,
                         }}
                     />
-                    <Breadcrumb items={getBreadcrumbItems()}>
-                    </Breadcrumb>
+                    <Breadcrumb items={getBreadcrumbItems()}/>
                     <Button
                         type="text"
                         icon={isDarkMode ? <MoonOutlined /> : <SunOutlined />}
@@ -209,7 +212,7 @@ const MainLayout = ({children}) => {
                     />
                 </Header>
                 <Content 
-                    className='m-7 mb-0 h-screen overflow-scroll no-scrollbar'
+                    className='p-7 pb-0 overflow-auto no-scrollbar'
                 >
                     <Outlet/>
                 </Content>
