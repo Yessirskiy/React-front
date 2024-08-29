@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Flex, Row, Col, Statistic, Typography, Divider, Card, Calendar, Badge } from 'antd';
+import { Flex, Row, Col, Statistic, Typography, Divider, Card, Calendar, Badge, Skeleton } from 'antd';
 import {
     InstagramOutlined,
     TwitterOutlined,
@@ -31,6 +31,7 @@ const MeetingsFeedPage = () => {
         is_prev_reviewed: null,
         next_meeting: null
     });
+    const [meetingsOverviewLoading, setMeetingsOverviewLoading] = useState(true);
     const { setNotification } = useContext(NotificationContext);
  
     const dateCellRender = (date) => {
@@ -77,9 +78,11 @@ const MeetingsFeedPage = () => {
     }
 
     const getUserOverview = async () => {
+        setMeetingsOverviewLoading(true);
         try {
             const data = await getMeetingsOverview(api);
             setMeetingsOverview(data);
+            setMeetingsOverviewLoading(false);
         } catch (error) {
             setNotification({
                 type: "error",
@@ -114,6 +117,14 @@ const MeetingsFeedPage = () => {
     const onPanelChange = (date, mode) => {
         calculateDisplayedRange(date);
     };
+
+    const fakeMeetings = Array.from({ length: 3 }).map((_, index) => (
+        <Col xs={24} sm={24} md={24} lg={24} xl={12} key={index}>
+            <Card key={index}>
+                <Skeleton active title paragraph={{ rows: 3 }} />
+            </Card>
+        </Col>
+    ));
     
     return (
         <div className='p-6'>
@@ -131,9 +142,9 @@ const MeetingsFeedPage = () => {
                                 lg={12} xl={12}
                             >
                                 <MeetingStatusCard 
-                                    prev_meeting={meetingsOverview.prev_meeting}
-                                    is_prev_reviewed={meetingsOverview.is_prev_reviewed}
-                                    next_meeting={meetingsOverview.next_meeting}
+                                    overview={meetingsOverview}
+                                    overviewLoading={meetingsOverviewLoading}
+                                    getUserOverview={getUserOverview}
                                 />
                             </Col>
                             <Col
@@ -146,14 +157,18 @@ const MeetingsFeedPage = () => {
                         </Row>
                         <Card bordered={false}>
                             <Row gutter={[28, 28]}>
-                            {meetingCards.map((card) => (
+                            {meetingsLoading ? 
+                            fakeMeetings :
+                            meetingCards.map((card) => (
                                 <Col xs={24} sm={24} md={24} lg={24} xl={12} key={card.id}>
                                     <MeetingCard
+                                        key={card.id}
                                         loading={meetingsLoading}
                                         data={card}
                                     />
                                 </Col>
-                                ))} 
+                            ))
+                            }
                             </Row>
                         </Card>
                     </Flex>
@@ -170,10 +185,12 @@ const MeetingsFeedPage = () => {
                             <Card className='mb-6'>
                                 <Flex wrap justify='space-between'>
                                     <Statistic
+                                        loading={meetingsOverviewLoading}
                                         title="Предстоящих встреч"
                                         value={meetingsOverview.upcoming_count}
                                     />
                                     <Statistic
+                                        loading={meetingsOverviewLoading}
                                         title="Посещенных встреч"
                                         value={meetingsOverview.attended_count}
                                     />

@@ -22,7 +22,7 @@ const NewsCarousel = () => {
         } catch (error) {
             setNotification({
                 type: "error",
-                content: "Не получилось получить новости."
+                content: "Не удалось получить новости."
             });
         }
     };

@@ -41,7 +41,7 @@ const ArticlePage = () => {
                 >
                     <Title level={2}>{article?.title}</Title>
                     <Divider/>
-                    <Text className="text-lg">{article?.body}</Text>
+                    <div className="flex flex-col gap-2 text-lg" dangerouslySetInnerHTML={{__html: article?.body}}></div>
                 </Col>
             </Row>
         </div>

@@ -63,10 +63,6 @@ const NewsLayout = ({filter}) => {
             pagination={articles.length > 0 ? articlesPagination : false}
             dataSource={articlesLoading && articles.length === 0 ? skeletonItems : articles}
             loading={false}
-            // loading={{
-            //     spinning: articlesLoading, // Boolean to control loading state
-            //     indicator: <Spin spinning indicator={<LoadingOutlined spin />} size="large" />, // Custom indicator
-            // }}
             renderItem={(item) => (
                 !articlesLoading ? (
                 <List.Item
