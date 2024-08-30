@@ -29,7 +29,7 @@ const MainLayout = ({children}) => {
     const {profile} = useContext(ProfileContext);
     let {user, logoutUser} = useContext(AuthContext);
     const [collapsed, setCollapsed] = useState(false);
-    const [selectedNav, setSelectedNav] = useState("meetings_new")
+    const [selectedNav, setSelectedNav] = useState("feed")
     const [isDarkMode, setIsDarkMode] = useState(false);
     let location = useLocation();
     const [hello, setHello] = useState("");
@@ -57,14 +57,14 @@ const MainLayout = ({children}) => {
         type: 'group',
         children: [
             {
-            key: 'meetings',
-            label: 'Встречи',
+            key: 'main',
+            label: 'Главное',
             icon: <AppstoreOutlined />,
             children: [
-                { key: 'meetings_feed', label: <NavLink to="/meetings/feed">Лента</NavLink>},
-                { key: 'meetings_news', label: <NavLink to="/meetings/news">Новости</NavLink> },
-                { key: 'meetings_attended', label: <NavLink to="/meetings/visited">Посещенные</NavLink> },
-                { key: 'meetings_help', label: 'Помощь' },
+                { key: 'feed', label: <NavLink to="/feed">Лента</NavLink>},
+                { key: 'news', label: <NavLink to="/news">Новости</NavLink> },
+                { key: 'meetings', label: <NavLink to="/meetings">Встречи</NavLink> },
+                { key: 'help', label: 'Помощь' },
             ]
             },
             {
@@ -101,8 +101,8 @@ const MainLayout = ({children}) => {
     ]
     const breadcrumbDummies = {
         "meetings": <NavLink to="/meetings">Встречи</NavLink>,
-        "feed": <NavLink to="/meetings/feed">Лента</NavLink>,
-        "news": <NavLink to="/meetings/news">Новости</NavLink>,
+        "feed": <NavLink to="/feed">Лента</NavLink>,
+        "news": <NavLink to="/news">Новости</NavLink>,
         "account": <NavLink to="/account">Аккаунт</NavLink>,
         "profile": <NavLink to="/account/profile">Профиль</NavLink>,
         "balance": <NavLink to="/account/balance">Баланс</NavLink>,
@@ -115,12 +115,12 @@ const MainLayout = ({children}) => {
         for (let nav of navs){
             result.push({title: breadcrumbDummies[nav]})
         }
-        if (/^\/meetings\/news\/\d+$/.test(location.pathname)){
+        if (/^\/news\/\d+$/.test(location.pathname)){
             result.pop()
             if (location.state?.name)
                 result.push({title:<Link state={{name: location.state.name}} to={location.pathname}>{location.state.name}</Link>})
             else 
-                result.push({title: <Link to={location.pathname}>{navs[2]}</Link>})
+                result.push({title: <Link to={location.pathname}>{navs[1]}</Link>})
         }
         return result;
     }
@@ -130,12 +130,12 @@ const MainLayout = ({children}) => {
     };
 
     useEffect(() => {
-        if (location.pathname.includes('/meetings/feed')) {
-            setSelectedNav('meetings_feed');
-        } else if (location.pathname.includes('/meetings/news')) {
-            setSelectedNav('meetings_news')
-        } else if (location.pathname.includes('/meetings/visited')) {
-            setSelectedNav('meetings_attended');
+        if (location.pathname.includes('/feed')) {
+            setSelectedNav('feed');
+        } else if (location.pathname.includes('/news')) {
+            setSelectedNav('news')
+        } else if (location.pathname.includes('/meetings')) {
+            setSelectedNav('meetings');
         } else if (location.pathname.includes('/account/profile')) {
             setSelectedNav('user_profile');
         } else if (location.pathname.includes('/account/balance')) {

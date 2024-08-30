@@ -10,6 +10,36 @@ import { getDateFormatted, StringToDate } from '../../../utils/DateFormatter';
 import useAxios from '../../../utils/UseAxios';
 import ProfileContext from '../../../context/ProfileContext';
 
+export const langLevels = [
+    {
+      value: 'A0',
+      label: '🍼 Ничего не знаю',
+    },
+    {
+      value: 'A1',
+      label: '👶 Начальный уровень (Начинающий)',
+    },
+    {
+      value: 'A2',
+      label: '🗣️ Основы общения (Предварительный)',
+    },
+    {
+      value: 'B1',
+      label: '💬 Средний уровень (Разговорный)',
+    },
+    {
+      value: 'B2',
+      label: '🎯 Выше среднего (Самостоятельный)',
+    },
+    {
+      value: 'C1',
+      label: '🌐 Продвинутый уровень (Продвинутый)',
+    },
+    {
+      value: 'C2',
+      label: '🏅 Профессиональный уровень (Свободный)',
+    },
+];
 
 const UserAdditionalForm = ({ cardStyling, apiFeedback }) => {
     const api = useAxios();
@@ -122,37 +152,6 @@ const UserAdditionalForm = ({ cardStyling, apiFeedback }) => {
     useEffect(() => {
         fetchCountries();
     }, []);
-
-    const langLevels = [
-        {
-          value: 'A0',
-          label: '🍼 Ничего не знаю',
-        },
-        {
-          value: 'A1',
-          label: '👶 Начальный уровень (Начинающий)',
-        },
-        {
-          value: 'A2',
-          label: '🗣️ Основы общения (Предварительный)',
-        },
-        {
-          value: 'B1',
-          label: '💬 Средний уровень (Разговорный)',
-        },
-        {
-          value: 'B2',
-          label: '🎯 Выше среднего (Самостоятельный)',
-        },
-        {
-          value: 'C1',
-          label: '🌐 Продвинутый уровень (Продвинутый)',
-        },
-        {
-          value: 'C2',
-          label: '🏅 Профессиональный уровень (Свободный)',
-        },
-    ];
 
     return (
         <Skeleton active="true" loading={loading} title="false">

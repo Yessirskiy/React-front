@@ -42,7 +42,7 @@ const ArticlePage = () => {
 
     return (
         <div>
-            <Row justify="center" align="middle" className="h-screen">
+            <Row justify="center" align={!article ? "middle" : "top"} className="h-screen">
                 <Col
                     xs={24} sm={22} md={22} 
                     lg={20} xl={20} xxl={20}

@@ -10,6 +10,7 @@ import MeetingsFeedPage from './pages/feed/MeetingsFeedPage';
 import { NotificationProvider } from './context/NotificationContext';
 import MeetingsNewsPage from './pages/news/MeetingsNewsPage';
 import ArticlePage from './pages/news/ArticlePage';
+import MeetingsPage from './pages/meetings/MeetingsPage';
 
 const router = createBrowserRouter([
   {
@@ -35,22 +36,20 @@ const router = createBrowserRouter([
         ]
       },
       {
+        path: "feed/",
+        element: <MeetingsFeedPage/>,
+      },
+      {
+        path: "news/",
+        element: <MeetingsNewsPage/>,
+      },
+      {
+        path: "news/:articleId/",
+        element: <ArticlePage/>
+      },
+      {
         path: "meetings/",
-        element: <Outlet/>,
-        children: [
-          {
-            path: "feed/",
-            element: <MeetingsFeedPage/>,
-          },
-          {
-            path: "news/",
-            element: <MeetingsNewsPage/>,
-          },
-          {
-            path: "news/:articleId/",
-            element: <ArticlePage/>
-          }
-        ]
+        element: <MeetingsPage/>
       }
     ]
   }

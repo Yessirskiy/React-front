@@ -68,7 +68,7 @@ const MeetingsFeedPage = () => {
     const getUserCalendar = async () => {
         try {
             const data = await getMeetingsCalendar(api, dayjs(range.start).format(), dayjs(range.end).format());
-            setMeetingsCalendar(data.meetings);
+            setMeetingsCalendar(data);
         } catch (error) {
             setNotification({
                 type: "error",
@@ -120,14 +120,16 @@ const MeetingsFeedPage = () => {
 
     const fakeMeetings = Array.from({ length: 3 }).map((_, index) => (
         <Col xs={24} sm={24} md={24} lg={24} xl={12} key={index}>
-            <Card key={index}>
-                <Skeleton active title paragraph={{ rows: 3 }} />
+            <Card hoverable key={index}>
+                <Skeleton className="mb-0" active title paragraph={{ rows: 0 }} />
+                <Divider className="my-0 mb-5"/>
+                <Skeleton active title={false} paragraph={{ rows: 4 }} />
             </Card>
         </Col>
     ));
     
     return (
-        <div className='p-6'>
+        <div>
             <Row gutter={[28, 28]}>
             <Col
                     className='gutter-row'

@@ -27,19 +27,17 @@ const MeetingsNewsPage = () => {
         console.log(key);
     };
     return (
-        <div>
-            <Flex vertical gap={14}>
-                <Search
-                    variant="filled"
-                    size="large"
-                    placeholder="Введите интересующий запрос"
-                    allowClear
-                    onSearch={onChange}
-                    className="w-1/2"
-                />
-                <Tabs className='w-full' defaultActiveKey="1" items={items} onChange={onChange} />
-            </Flex>
-        </div>
+        <Flex vertical gap={14}>
+            <Search
+                variant="filled"
+                size="large"
+                placeholder="Введите интересующий запрос"
+                allowClear
+                onSearch={onChange}
+                className="w-1/2"
+            />
+            <Tabs className='w-full' defaultActiveKey="alerts" items={items} onChange={onChange} />
+        </Flex>
     )
 }
 

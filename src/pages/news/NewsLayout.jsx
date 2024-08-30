@@ -75,11 +75,11 @@ const NewsLayout = ({filter}) => {
                 >
                     <List.Item.Meta
                         avatar={<Avatar src={item.avatar} />}
-                        title={<Link state={{name: item.title}} to={`/meetings/news/${item.id}`}>{item.title}</Link>}
+                        title={<Link state={{name: item.title}} to={`/news/${item.id}`}>{item.title}</Link>}
                         description={
                             <div className="flex flex-col">
                                 <p>{item?.description}</p>
-                                <Link state={{name: item.title}} to={`/meetings/news/${item.id}`}>Открыть</Link>
+                                <Link state={{name: item.title}} to={`/news/${item.id}`}>Открыть</Link>
                             </div>
                         }
                     />
