@@ -52,7 +52,7 @@ const MeetingsFeedPage = () => {
     const getFeed = async () => {
         setMeetingsLoading(true);
         try {
-            const data = await getMeetingsFeed(api, 1, 10);
+            const data = await getMeetingsFeed(api, 1, 10, dayjs().toISOString());
             setMeetingCards(data.results);
             setMeetingsLoading(false);
         } catch (error) {

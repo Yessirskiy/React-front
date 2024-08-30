@@ -3,12 +3,21 @@ const calendarURL = 'api/meetings/calendar/'
 const overviewURL = 'api/meetings/overview/'
 const postReviewURL = 'api/meetings/review/'
 
-export const getMeetingsFeed = async (api, page, page_size) => {
+export const getMeetingsFeed = async (api, page, page_size, period_start, period_end, english_level) => {
     try {
+        let params = {};
+        if (period_start)
+            params.period_start = period_start;
+        if (period_end)
+            params.period_end = period_end;
+        if (english_level)
+            params.english_level = english_level;
+        console.log(params);
         const response = await api.get(feedURL, { 
             params: {
                 page: page,
                 page_size: page_size,
+                ...params
             }
         });
         return response.data;
