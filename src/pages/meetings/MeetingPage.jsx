@@ -21,8 +21,9 @@ const MeetingPage = () => {
     const api = useAxios();
     const params = useParams();
     const [meeting, setMeeting] = useState(null);
-    const [meetingEvents, setMeetingEvents] = useState(null);
-    const [eventCurrent, setEventCurrent] = useState(null);
+    const [meetingEvents, setMeetingEvents] = useState([]);
+    const [timeline, setTimeline] = useState([]);
+    const [timelineCur, setTimelineCur] = useState(0);
     const [meetingDuration, setMeetingDuration] = useState(null);
     const [meetingLoading, setMeetingLoading] = useState(true);
     const [meetingEventsLoading, setMeetingEventsLoading] = useState(true);
@@ -161,30 +162,25 @@ const MeetingPage = () => {
         },
     ];
 
-    const timelineItems = meetingEvents.map((item, i) => {
-        const key = Object.keys(item)[0];
-        if (dayjs() > dayjs(item[key]))
-            setEventCurrent(i);
-        return {
-            title: key,
-            description: dayjs(item[key]).format(dateFormat)
-        }
-    });
+    const getTimeline = () => {
+        setTimeline(meetingEvents.map((item, i) => {
+            const key = Object.keys(item)[0];
+            if (dayjs() > dayjs(item[key])){
+                if (i == meetingEvents.length - 1)
+                    setTimelineCur(i + 1);
+                else
+                    setTimelineCur(i);
+            }
+            return {
+                title: key,
+                description: dayjs(item[key]).format(dateFormat)
+            }
+        }));
+    };
 
-    // const timelineItems = [
-    //     {
-    //         title: "Встреча создана",
-    //         description: dayjs(meeting?.creation_date).format(dateFormat),
-    //     },
-    //     {
-    //         title: "Начало встречи",
-    //         description: dayjs(meeting?.meeting_start_date).format(dateFormat),
-    //     },
-    //     {
-    //         title: "Конец встречи",
-    //         description: dayjs(meeting?.meeting_end_date).format(dateFormat),
-    //     }
-    // ];
+    useEffect(() => {
+        getTimeline();
+    }, [meetingEvents]);
 
     return (
     <>
@@ -226,7 +222,7 @@ const MeetingPage = () => {
                                     format={() => `${meeting?.attendants.length}/${meeting?.max_attendants}`}
                                 />
                                 <Flex wrap gap='small' justify="space-between">
-                                    <Text className="w-2/3">Участники:</Text>
+                                    <Text className="w-fit">Участники:</Text>
                                     <Avatar.Group>
                                         {meeting?.attendants.map((attendant) => (
                                             <Tooltip title={attendant.user_short.first_name} placement="top">
@@ -246,7 +242,7 @@ const MeetingPage = () => {
                         <Card className='h-full'>
                             <Flex vertical gap="large">
                                 <Title level={5}>Лента событий</Title>
-                                <Steps current={eventCurrent} direction="vertical" items={timelineItems} />
+                                <Steps current={timelineCur} direction="vertical" items={timeline} />
                             </Flex>
                         </Card>
                     </Col>
@@ -254,7 +250,7 @@ const MeetingPage = () => {
                         xs={24} sm={24} md={24} 
                         lg={14} xl={16} xxl={16}
                     >
-                        <Card>
+                        <Card className="h-full">
                             <Flex vertical gap="large">
                                 <Descriptions 
                                     bordered 
