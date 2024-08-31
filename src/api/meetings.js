@@ -14,6 +14,17 @@ export const getMeeting = async (api, id) => {
     }
 }
 
+export const getMeetingEvents = async (api, id) => {
+    const meetingEventsURL = `api/meetings/${id}/events/`
+    try {
+        const response = await api.get(meetingEventsURL);
+        return response.data;
+    } catch (error) {
+        console.log("Error while retrieving meeting:", error);
+        throw error;
+    }
+}
+
 export const getMeetingsFeed = async (api, page, page_size, period_start, period_end, english_level) => {
     try {
         let params = {};
