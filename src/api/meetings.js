@@ -1,7 +1,18 @@
+const meetingURL = 'api/meetings/'
 const feedURL = 'api/meetings/feed/'
 const calendarURL = 'api/meetings/calendar/'
 const overviewURL = 'api/meetings/overview/'
 const postReviewURL = 'api/meetings/review/'
+
+export const getMeeting = async (api, id) => {
+    try {
+        const response = await api.get(`${meetingURL}${id}`);
+        return response.data;
+    } catch (error) {
+        console.log("Error while retrieving meeting:", error);
+        throw error;
+    }
+}
 
 export const getMeetingsFeed = async (api, page, page_size, period_start, period_end, english_level) => {
     try {

@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import wordForm from "./wordForming";
 
 export const getDateFormatted = (raw) => {
     const selectedDate = raw ? raw.toDate() : null;
@@ -8,6 +9,16 @@ export const getDateFormatted = (raw) => {
     }
     return null;
 };
+
+export const durationFormat = (duration) => {
+    if (duration.minutes() === 0) {
+        return `H ${wordForm(duration.hours(), "час", "часа", "часов")}`
+    } else if (duration.hours() != 0) {
+        return `H ${wordForm(duration.hours(), "час", "часа", "часов")} m ${wordForm(duration.minutes(), 'минута', 'минуты', 'минут')}`
+    } else if (duration.hours() === 0) {
+        return `m ${wordForm(duration.minutes(), 'минута', 'минуты', 'минут')}`
+    }
+}
 
 export const StringToDate = (raw) => {
     if (raw)

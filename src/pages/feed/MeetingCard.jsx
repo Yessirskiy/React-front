@@ -4,6 +4,7 @@ import { UserOutlined } from '@ant-design/icons';
 import dayjs from "dayjs";
 import duration from 'dayjs/plugin/duration';
 import wordForm from "../../utils/wordForming";
+import { Link } from "react-router-dom";
 
 dayjs.extend(duration);
 
@@ -30,41 +31,43 @@ const MeetingCard = ({data, loading}) => {
     }
 
     return (
-        <Card onClick={handleClick} hoverable loading={loading ? true : undefined}>
-            <Flex justify="space-between">
-                <Flex vertical className='mb-2'>
-                    <h3 className="m-0">{title}</h3>
-                    <Text className="text-sm text-gray-300">
-                        {dayjs(meeting_start_date).isAfter(dayjs()) ? "Состоится " : "Состоялось "} 
-                        {dayjs(meeting_start_date).format("YYYY-MM-DD HH:mm")}
-                    </Text>
-                    <Text className="text-sm text-gray-300">
-                    ({meeting_duration.format(durationFormat(meeting_duration))})
-                    </Text>
+        <Link state={{name: title}} to={`/meetings/${id}`}>
+            <Card onClick={handleClick} hoverable loading={loading ? true : undefined}>
+                <Flex justify="space-between">
+                    <Flex vertical className='mb-2'>
+                        <h3 className="m-0">{title}</h3>
+                        <Text className="text-sm text-gray-300">
+                            {dayjs(meeting_start_date).isAfter(dayjs()) ? "Состоится " : "Состоялось "} 
+                            {dayjs(meeting_start_date).format("YYYY-MM-DD HH:mm")}
+                        </Text>
+                        <Text className="text-sm text-gray-300">
+                        ({meeting_duration.format(durationFormat(meeting_duration))})
+                        </Text>
+                    </Flex>
+                    <Flex wrap gap="4px 0" className='h-fit justify-end'>
+                        <Tag bordered={false}>{english_level}</Tag>
+                        <Tag bordered={false}>{is_online ? 'Онлайн' : 'Оффлайн'}</Tag>
+                        <Tag bordered={false}>{min_age}+</Tag>
+                    </Flex>
                 </Flex>
-                <Flex wrap gap="4px 0" className='h-fit justify-end'>
-                    <Tag bordered={false}>{english_level}</Tag>
-                    <Tag bordered={false}>{is_online ? 'Онлайн' : 'Оффлайн'}</Tag>
-                    <Tag bordered={false}>{min_age}+</Tag>
+                <Divider style={{margin: 0}}/>
+                <Flex className="my-2" wrap gap='large' justify="space-between">
+                    <Text className="w-2/3">{topic}</Text>
+                    <Avatar.Group>
+                        {attendants.map((attendant) => (
+                            <Tooltip title={attendant.user_short.first_name} placement="top">
+                                <Avatar size='small' icon={<UserOutlined/>} src={attendant.user_short.avatar}/>
+                            </Tooltip>
+                        ))}
+                    </Avatar.Group>
                 </Flex>
-            </Flex>
-            <Divider style={{margin: 0}}/>
-            <Flex className="my-2" wrap gap='large' justify="space-between">
-                <Text className="w-2/3">{topic}</Text>
-                <Avatar.Group>
-                    {attendants.map((attendant) => (
-                        <Tooltip title={attendant.user_short.first_name} placement="top">
-                            <Avatar size='small' icon={<UserOutlined/>} src={attendant.user_short.avatar}/>
-                        </Tooltip>
-                    ))}
-                </Avatar.Group>
-            </Flex>
-            <Progress size='small' percent={attendants.length / max_attendants * 100} showInfo={false}/>
-            <Flex justify="space-between">
-                <Text className="text-sm text-gray-300">Участников: {attendants.length}/{max_attendants}</Text>
-                <Tag color="success" bordered={false} className="m-0">Открыто</Tag>
-            </Flex>
-        </Card>
+                <Progress size='small' percent={attendants.length / max_attendants * 100} showInfo={false}/>
+                <Flex justify="space-between">
+                    <Text className="text-sm text-gray-300">Участников: {attendants.length}/{max_attendants}</Text>
+                    <Tag color="success" bordered={false} className="m-0">Открыто</Tag>
+                </Flex>
+            </Card>
+        </Link>
     )
 }
 

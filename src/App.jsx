@@ -11,6 +11,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import MeetingsNewsPage from './pages/news/MeetingsNewsPage';
 import ArticlePage from './pages/news/ArticlePage';
 import MeetingsPage from './pages/meetings/MeetingsPage';
+import MeetingPage from './pages/meetings/MeetingPage';
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: "meetings/",
         element: <MeetingsPage/>
+      },
+      {
+        path: "meetings/:meetingId/",
+        element: <MeetingPage/>
       }
     ]
   }
