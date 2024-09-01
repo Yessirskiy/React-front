@@ -6,7 +6,7 @@ const postReviewURL = 'api/meetings/review/'
 
 export const getMeeting = async (api, id) => {
     try {
-        const response = await api.get(`${meetingURL}${id}`);
+        const response = await api.get(`${meetingURL}${id}/`);
         return response.data;
     } catch (error) {
         console.log("Error while retrieving meeting:", error);

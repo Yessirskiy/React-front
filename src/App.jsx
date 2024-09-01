@@ -12,6 +12,7 @@ import MeetingsNewsPage from './pages/news/MeetingsNewsPage';
 import ArticlePage from './pages/news/ArticlePage';
 import MeetingsPage from './pages/meetings/MeetingsPage';
 import MeetingPage from './pages/meetings/MeetingPage';
+import LoginPage from './pages/auth/LoginPage';
 
 const router = createBrowserRouter([
   {
@@ -57,7 +58,11 @@ const router = createBrowserRouter([
         element: <MeetingPage/>
       }
     ]
-  }
+  },
+  {
+    path: "/login",
+    element: <LoginPage/>
+  },
 ])
 
 const App = () => {

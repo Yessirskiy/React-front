@@ -26,8 +26,8 @@ const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 const MainLayout = ({children}) => {
     const api = useAxios();
-    const {profile} = useContext(ProfileContext);
-    let {user, logoutUser} = useContext(AuthContext);
+    const { profile } = useContext(ProfileContext);
+    let {user} = useContext(AuthContext);
     const [collapsed, setCollapsed] = useState(false);
     const [selectedNav, setSelectedNav] = useState("feed")
     const [isDarkMode, setIsDarkMode] = useState(false);
@@ -151,6 +151,10 @@ const MainLayout = ({children}) => {
         logoutUser();
         return <Navigate to="/login"/>;
     }
+
+    if (!user)
+        return <Navigate to="/login/"/>
+
 
     return (
         <ConfigProvider theme={themeConfig} locale={ruRU}>

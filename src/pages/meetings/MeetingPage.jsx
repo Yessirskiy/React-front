@@ -48,7 +48,7 @@ const MeetingPage = () => {
         setMeetingEventsLoading(true);
         try {
             const data = await getMeetingEvents(api, params.meetingId);
-            setMeetingEvents(data.events);
+            setMeetingEvents(data);
             setMeetingEventsLoading(false);
         } catch (error) {
             setNotification({
@@ -164,16 +164,15 @@ const MeetingPage = () => {
 
     const getTimeline = () => {
         setTimeline(meetingEvents.map((item, i) => {
-            const key = Object.keys(item)[0];
-            if (dayjs() > dayjs(item[key])){
+            if (dayjs() > dayjs(item["date"])){
                 if (i == meetingEvents.length - 1)
                     setTimelineCur(i + 1);
                 else
                     setTimelineCur(i);
             }
             return {
-                title: key,
-                description: dayjs(item[key]).format(dateFormat)
+                title: item["name"],
+                description: dayjs(item["date"]).format(dateFormat)
             }
         }));
     };

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const loginURL = 'api/token/'
-const logoutURL = 'api/logout/'
+const loginURL = 'api/auth/login/'
+const logoutURL = 'api/auth/logout/'
 const changePasswordULR = 'api/users/change_password/'
 
 export const changeUserPassword = async (api, payload) => {
@@ -24,11 +24,14 @@ const axiosInst = axios.create({
         "Content-Type": "application/json",
     }
 });
+axiosInst.defaults.xsrfCookieName = "csrftoken";
+axiosInst.defaults.xsrfHeaderName = "X-CSRFToken";
+axiosInst.defaults.withCredentials = true;
 
 export const login = async (payload) => {
     try {
         const response = await axiosInst.post(loginURL, payload);
-        return response.data;
+        return response;
     } catch (error) {
         console.log("Error while loggin user in:", error);
         throw error;

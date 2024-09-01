@@ -1,5 +1,5 @@
 const balanceURL = 'api/balance/balance/'
-const transactionsURL = 'api/balance/transactions'
+const transactionsURL = 'api/balance/transactions/'
 
 export const getBalance = async (api) => {
     try {
