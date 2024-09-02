@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import NotificationContext from "../../context/NotificationContext";
 import { UserOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { Row, Col, Card, Flex, Space, Typography, Descriptions, Tooltip, Progress, Avatar, Badge, Button, Steps } from "antd";
+import { Skeleton } from "antd";
 import duration from 'dayjs/plugin/duration';
 import { durationFormat } from "../../utils/DateFormatter";
 import 'dayjs/locale/ru'
@@ -77,7 +78,7 @@ const MeetingPage = () => {
             key: "topic",
             span: 2,
             label: "Тема",
-            children: meeting?.topic,
+            children: <Skeleton paragraph={{rows: 1}} active loading={meetingLoading}>{meeting?.topic}</Skeleton>,
         },
         {
             key: "format",
@@ -90,7 +91,7 @@ const MeetingPage = () => {
                 xxl: 1,
             },
             label: <Tooltip title="Подробнее далее">Формат</Tooltip>,
-            children: meeting?.is_online ? "Онлайн" : "Оффлайн"
+            children: <Skeleton title={false} paragraph={{rows: 1}} active loading={meetingLoading}>{meeting?.is_online ? "Онлайн" : "Оффлайн"}</Skeleton>
         },
         {
             key: "status",
@@ -103,7 +104,7 @@ const MeetingPage = () => {
                 xxl: 1,
             },
             label: <Tooltip title="Статус">Статус</Tooltip>,
-            children: <Badge status={getStatusBadge(meeting?.status)} text={meeting?.status} />,
+            children: <Skeleton title={false} paragraph={{rows: 1}} active loading={meetingLoading}><Badge status={getStatusBadge(meeting?.status)} text={meeting?.status} /></Skeleton>,
         }
     ];
 
@@ -119,7 +120,7 @@ const MeetingPage = () => {
                 xxl: 1,
             },
             label: "Время начала",
-            children: dayjs(meeting?.meeting_start_date).format(dateFormat)
+            children: <Skeleton title={false} paragraph={{rows: 1}} active loading={meetingLoading}>{dayjs(meeting?.meeting_start_date).format(dateFormat)}</Skeleton>
         },
         {
             key: "meeting_end_date",
@@ -132,7 +133,7 @@ const MeetingPage = () => {
                 xxl: 1,
             },
             label: "Время окончания",
-            children: dayjs(meeting?.meeting_end_date).format(dateFormat)
+            children: <Skeleton title={false} paragraph={{rows: 1}} active loading={meetingLoading}>{dayjs(meeting?.meeting_end_date).format(dateFormat)}</Skeleton>
         },
         {
             key: "meeting_duration",
@@ -145,7 +146,7 @@ const MeetingPage = () => {
                 xxl: 1,
             },
             label: "Продолжительность",
-            children: meetingDuration?.format(durationFormat(meetingDuration))
+            children: <Skeleton title={false} paragraph={{rows: 1}} active loading={meetingLoading}>{meetingDuration?.format(durationFormat(meetingDuration))}</Skeleton>
         }
     ];
 
@@ -153,12 +154,12 @@ const MeetingPage = () => {
         {
             key: "english_level",
             label: <Tooltip title="Рекомендованный уровень владения языком">Уровень английского</Tooltip>,
-            children: meeting?.english_level,
+            children: <Skeleton title={false} paragraph={{rows: 1}} active loading={meetingLoading}>{meeting?.english_level}</Skeleton>,
         },
         {
             key: "age",
             label: <Tooltip title="Ограничения по возрасту">Возраст</Tooltip>,
-            children: `${meeting?.min_age}+`,
+            children: <Skeleton title={false} paragraph={{rows: 1}} active loading={meetingLoading}>{meeting?.min_age}+</Skeleton>,
         },
     ];
 
@@ -214,12 +215,19 @@ const MeetingPage = () => {
                     >
                         <Card className="h-full">
                             <Flex vertical gap='middle' align="center">
-                                <Title level={5} className="text-left w-full">Участники</Title>
-                                <Progress 
-                                    percent={meeting?.attendants.length / meeting?.max_attendants * 100} 
-                                    type="dashboard" 
-                                    format={() => `${meeting?.attendants.length}/${meeting?.max_attendants}`}
-                                />
+                                <Skeleton loading={meetingLoading} active paragraph={{rows: 0}}>
+                                    <Title level={5} className="text-left w-full">Участники</Title>
+                                </Skeleton>
+                                <Skeleton loading={meetingLoading} title={false} active paragraph={{rows: 4}}>
+                                    <Progress 
+                                        percent={meeting ? (meeting.attendants.length / meeting.max_attendants * 100) : 50} 
+                                        type="dashboard" 
+                                        format={meeting ? (() => `${meeting?.attendants.length}/${meeting?.max_attendants}`)
+                                        : (() => "")
+                                        }
+                                    />
+                                </Skeleton>
+                                {meeting?.attendants && 
                                 <Flex wrap gap='small' justify="space-between">
                                     <Text className="w-fit">Участники:</Text>
                                     <Avatar.Group>
@@ -230,7 +238,13 @@ const MeetingPage = () => {
                                         ))}
                                     </Avatar.Group>
                                 </Flex>
-                                <Button className="w-full" size="large">Присоедениться</Button>
+                                }
+                                {meetingLoading ? (
+                                    <Skeleton.Button block={true} active={true}/>
+                                ) : (
+                                    <Button className="w-full" size="large">Присоединиться</Button>
+                                )}
+                                
                             </Flex>
                         </Card>
                     </Col>
