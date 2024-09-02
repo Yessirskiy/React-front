@@ -4,12 +4,12 @@ import { Upload, Button } from 'antd';
 import useAxios from '../../utils/UseAxios';
 import { updateProfileAvatar, removeProfileAvatar } from '../../api/user';
 import NotificationContext from '../../context/NotificationContext';
-import ProfileContext from '../../context/ProfileContext';
+import { useProfile } from '../../hooks/useProfile';
 
-const AvatarUploader = ({profileImg, borderRadius}) => {
+const AvatarUploader = ({ borderRadius }) => {
   const api = useAxios()
   const [loading, setLoading] = useState(false);
-  const { profile, setProfile } = useContext(ProfileContext);
+  const {profile, setProfile} = useProfile();
   const { setNotification } = useContext(NotificationContext);
 
   const beforeUpload = (file) => {
@@ -60,6 +60,7 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
   };
 
   const removeAvatar = async () => {
+    setLoading(true);
     try {
       await removeProfileAvatar(api);
       setProfile({...profile, avatar: null});
@@ -72,6 +73,8 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
         type: 'error',
         content: 'Ошибка удаления фотографии профиля.',
       });
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -135,7 +138,7 @@ const AvatarUploader = ({profileImg, borderRadius}) => {
         )}
         </Upload>
         {profile?.avatar && (
-            <Button className='mt-6' danger size='middle' onClick={removeAvatar}>Удалить</Button>
+            <Button loading={loading} className='mt-6' danger size='middle' onClick={removeAvatar}>Удалить</Button>
         )}
     </div>
   );

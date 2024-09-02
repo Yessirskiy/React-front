@@ -6,15 +6,14 @@ import AvatarUploader from '../AvatarUpload';
 import { updateProfile } from '../../../api/user';
 import NotificationContext from '../../../context/NotificationContext';
 import useAxios from '../../../utils/UseAxios';
-import ProfileContext from '../../../context/ProfileContext';
+import { useProfile } from '../../../hooks/useProfile';
 
 
 const UserAdditionalForm = ({ cardStyling, apiFeedback }) => {
     const api = useAxios();
     const { token } = theme.useToken();
     const [changeProfileForm] = Form.useForm();
-    const [profileImg, setProfileImg] = useState(null);
-    const { profile, setProfile } = useContext(ProfileContext);
+    const {profile, setProfile} = useProfile();
     const {setNotification} = useContext(NotificationContext);
     const [loading, setLoading] = useState(true);
 
@@ -25,9 +24,6 @@ const UserAdditionalForm = ({ cardStyling, apiFeedback }) => {
                 first_name: data.first_name,
                 last_name: data.last_name,
                 phone_number: data.phone_number,
-            }
-            if (data.avatar) {
-                setProfileImg(data.avatar);
             }
             return processed;
         }
@@ -83,7 +79,11 @@ const UserAdditionalForm = ({ cardStyling, apiFeedback }) => {
                         xs={24} sm={24} md={12}
                         lg={10} xl={10}
                     >
-                        <AvatarUploader profileImg={profileImg} borderRadius={token.borderRadius}/>
+                        <AvatarUploader 
+                            borderRadius={token.borderRadius}
+                            profile={profile}
+                            setProfile={setProfile}    
+                        />
                     </Col>
                     <Col 
                         className="gutter-row"

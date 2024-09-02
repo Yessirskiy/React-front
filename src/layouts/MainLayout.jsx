@@ -10,10 +10,9 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import { Typography, Avatar, Button, Layout, Menu, Breadcrumb, theme, ConfigProvider, Flex } from 'antd';
-import AuthContext from '../context/AuthContext.jsx';
-import { Navigate, useLocation } from 'react-router-dom';
-import useAxios from '../utils/UseAxios.jsx';
-import ProfileContext from '../context/ProfileContext.jsx';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth.jsx';
+import { logoutUser } from '../api/auth.js';
 import { NavLink, Link } from "react-router-dom";
 import { Outlet } from 'react-router-dom';
 import ruRU from 'antd/locale/ru_RU';
@@ -24,15 +23,13 @@ dayjs.locale('ru');
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
-const MainLayout = ({children}) => {
-    const api = useAxios();
-    const { profile } = useContext(ProfileContext);
-    let {user} = useContext(AuthContext);
+const MainLayout = () => {
+    const { logout } = useAuth();
     const [collapsed, setCollapsed] = useState(false);
     const [selectedNav, setSelectedNav] = useState("feed")
     const [isDarkMode, setIsDarkMode] = useState(false);
-    let location = useLocation();
-    const [hello, setHello] = useState("");
+    let location = useLocation();   
+    const { user } = useAuth();
 
     const toggleTheme = () => {
         setIsDarkMode(!isDarkMode);
@@ -147,15 +144,12 @@ const MainLayout = ({children}) => {
         }
     }, [location.pathname]);
 
-    const handleLogout = (e) => {
-        logoutUser();
+    const handleLogout = async (e) => {
+        await logoutUser();
+        logout();
         return <Navigate to="/login"/>;
     }
-
-    if (!user)
-        return <Navigate to="/login/"/>
-
-
+    
     return (
         <ConfigProvider theme={themeConfig} locale={ruRU}>
             <Layout className='h-screen'>
@@ -163,14 +157,14 @@ const MainLayout = ({children}) => {
                     <Flex vertical className='h-full'>
                         <Flex className="m-4 items-center" style={collapsed ? {justifyContent: "center"} : undefined}>
                             <Avatar
-                                src={profile?.avatar}
+                                src={user?.avatar}
                                 shape='square'
                                 size={collapsed ? 40 : 35}
                                 icon={<UserOutlined />}
                                 className={collapsed ? 'mr-0' : 'mr-4'}
                             />
                             {!collapsed && (
-                                <Text>{profile?.first_name} {profile?.last_name}</Text>
+                                <Text>{user?.first_name} {user?.last_name}</Text>
                             )}
                         </Flex>
                         <Menu className='m-0' mode="inline"

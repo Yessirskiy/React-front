@@ -18,7 +18,7 @@ export const NotificationProvider = ({children}) => {
             messageApi.open(notification);
             setNotification(null);
         }
-      }, [notification, messageApi]);
+    }, [notification, messageApi]);
 
     return (
         <NotificationContext.Provider value={contextData}>

@@ -1,8 +1,6 @@
 import React from 'react';
-import { AuthProvider } from './context/AuthContext';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
-import { ProfileProvider } from './context/ProfileContext';
 import UserProfilePage from './pages/profile/UserProfilePage';
 import UserBalancePage from './pages/balance/UserBalancePage';
 import UserSettingsPage from './pages/settings/UserSettingsPage';
@@ -13,68 +11,71 @@ import ArticlePage from './pages/news/ArticlePage';
 import MeetingsPage from './pages/meetings/MeetingsPage';
 import MeetingPage from './pages/meetings/MeetingPage';
 import LoginPage from './pages/auth/LoginPage';
+import { AuthLayout } from './layouts/AuthLayout';
+import { ProfileProvider } from './hooks/useProfile';
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <MainLayout/>,
+    element: <AuthLayout/>,
     children: [
       {
-        path: "account/",
-        element: <Outlet/>,
+        path: "/login",
+        element: <LoginPage/>
+      },
+      {
+        path: "/",
+        element: <MainLayout/>,
         children: [
           {
-            path: "profile/",
-            element: <UserProfilePage/>,
+            path: "account/",
+            element: <Outlet/>,
+            children: [
+              {
+                path: "profile/",
+                element: <ProfileProvider><UserProfilePage/></ProfileProvider>,
+              },
+              {
+                path: "balance/",
+                element: <UserBalancePage/>,
+              },
+              {
+                path: "settings/",
+                element: <UserSettingsPage/>,
+              }
+            ]
           },
           {
-            path: "balance/",
-            element: <UserBalancePage/>,
+            path: "feed/",
+            element: <MeetingsFeedPage/>,
           },
           {
-            path: "settings/",
-            element: <UserSettingsPage/>,
+            path: "news/",
+            element: <MeetingsNewsPage/>,
+          },
+          {
+            path: "news/:articleId/",
+            element: <ArticlePage/>
+          },
+          {
+            path: "meetings/",
+            element: <MeetingsPage/>
+          },
+          {
+            path: "meetings/:meetingId/",
+            element: <MeetingPage/>
           }
         ]
       },
-      {
-        path: "feed/",
-        element: <MeetingsFeedPage/>,
-      },
-      {
-        path: "news/",
-        element: <MeetingsNewsPage/>,
-      },
-      {
-        path: "news/:articleId/",
-        element: <ArticlePage/>
-      },
-      {
-        path: "meetings/",
-        element: <MeetingsPage/>
-      },
-      {
-        path: "meetings/:meetingId/",
-        element: <MeetingPage/>
-      }
     ]
-  },
-  {
-    path: "/login",
-    element: <LoginPage/>
   },
 ])
 
 const App = () => {
   return (
     <div className="App">
-      <AuthProvider>
-        <NotificationProvider>
-          <ProfileProvider>
-            <RouterProvider router={router}/>
-          </ProfileProvider>
-        </NotificationProvider>
-      </AuthProvider>   
+      <NotificationProvider>
+        <RouterProvider router={router}/>
+      </NotificationProvider>
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const loginURL = 'api/auth/login/'
 const logoutURL = 'api/auth/logout/'
@@ -24,11 +25,13 @@ const axiosInst = axios.create({
         "Content-Type": "application/json",
     }
 });
-axiosInst.defaults.xsrfCookieName = "csrftoken";
-axiosInst.defaults.xsrfHeaderName = "X-CSRFToken";
 axiosInst.defaults.withCredentials = true;
 
-export const login = async (payload) => {
+export const loginUser = async (payload) => {
+    const csrfToken = Cookies.get('csrftoken');
+    if (csrfToken) {
+        axiosInst.defaults.headers.common['X-CSRFToken'] = csrfToken;
+    }
     try {
         const response = await axiosInst.post(loginURL, payload);
         return response;
@@ -38,9 +41,13 @@ export const login = async (payload) => {
     }
 }
 
-export const logout = async (payload) => {
+export const logoutUser = async () => {
+    const csrfToken = Cookies.get('csrftoken');
+    if (csrfToken) {
+        axiosInst.defaults.headers.common['X-CSRFToken'] = csrfToken;
+    }
     try {
-        const response = await axiosInst.post(logoutURL, payload);
+        const response = await axiosInst.post(logoutURL);
         return response.data;
     } catch (error) {
         console.log("Error while loggin user out:", error);

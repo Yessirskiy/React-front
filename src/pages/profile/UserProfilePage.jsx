@@ -11,12 +11,12 @@ import UserProfileForm from './forms/UserProfileForm'
 import ChangePasswordForm from './forms/ChangePasswordForm';
 import ChangeAuthPreferencesForm from './forms/ChangeAuthPreferencesForm';
 import { NotificationProvider } from '../../context/NotificationContext';
-import ProfileContext from '../../context/ProfileContext';
+import { useProfile } from '../../hooks/useProfile';
 
 
 const UserProfilePage = () => {
     const { token } = theme.useToken();
-    const { profile, setProfile, getUserProfile } = useContext(ProfileContext);
+    const {profile, setProfile} = useProfile();
     const [authPreferences, setAuthPreferences] = useState(null);
 
     const api = useAxios();
@@ -26,6 +26,16 @@ const UserProfilePage = () => {
         backgroundColor: token.colorBgContainer,
         borderRadius: token.borderRadiusLG,
     };
+
+    const getUserProfile = async () => {
+        try {
+            const data = await getProfile(api);
+            setProfile(data);
+        } catch (error) {
+            setProfile({});
+        }
+    };
+
 
     const getUserAuthPreferences = async () => {
         try {

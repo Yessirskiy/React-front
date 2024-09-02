@@ -8,7 +8,7 @@ import { UserOutlined, UploadOutlined, QuestionCircleOutlined } from '@ant-desig
 import NotificationContext from '../../../context/NotificationContext';
 import { getDateFormatted, StringToDate } from '../../../utils/DateFormatter';
 import useAxios from '../../../utils/UseAxios';
-import ProfileContext from '../../../context/ProfileContext';
+import { useProfile } from '../../../hooks/useProfile';
 
 export const langLevels = [
     {
@@ -46,8 +46,8 @@ const UserAdditionalForm = ({ cardStyling, apiFeedback }) => {
     const [changeAdditionalForm] = Form.useForm();
     const {setNotification} = useContext(NotificationContext);
     const [loading, setLoading] = useState(true);
-
-    const { profile, setProfile } = useContext(ProfileContext);
+    const {profile, setProfile} = useProfile();
+    
     const [countries, setCountries] = useState([]);
     const [cities, setCities] = useState([]);
     const [cityLoading, setCityLoading] = useState(false);
