@@ -54,51 +54,53 @@ const MainLayout = () => {
         type: 'group',
         children: [
             {
-            key: 'main',
-            label: 'Главное',
-            icon: <AppstoreOutlined />,
-            children: [
-                { key: 'feed', label: <NavLink to="/feed">Лента</NavLink>},
-                { key: 'news', label: <NavLink to="/news">Новости</NavLink> },
-                { key: 'meetings', label: <NavLink to="/meetings">Встречи</NavLink> },
-                { key: 'help', label: 'Помощь' },
-            ]
+                key: 'main',
+                label: 'Главное',
+                icon: <AppstoreOutlined />,
+                children: [
+                    { key: 'feed', label: <NavLink to="/feed">Лента</NavLink>},
+                    { key: 'courses', label: <Link to="/courses">Потоки</Link>},
+                    { key: 'news', label: <NavLink to="/news">Новости</NavLink> },
+                    { key: 'meetings', label: <NavLink to="/meetings">Встречи</NavLink> },
+                    { key: 'help', label: 'Помощь' },
+                ]
             },
             {
-            key: 'blog',
-            label: 'Блог',
-            icon: <FormOutlined />,
-            children: [
-                { key: 'blog_feed', label: 'Актуальное' },
-                { key: 'blog_blogs', label: 'Мои блоги' },
-                { key: 'blog_articles', label: 'Мои статьи' },
-                { key: 'blog_help', label: 'Помощь' },
-            ]
+                key: 'blog',
+                label: 'Блог',
+                icon: <FormOutlined />,
+                children: [
+                    { key: 'blog_feed', label: 'Актуальное' },
+                    { key: 'blog_blogs', label: 'Мои блоги' },
+                    { key: 'blog_articles', label: 'Мои статьи' },
+                    { key: 'blog_help', label: 'Помощь' },
+                ]
             },
         ],
         },
         {
-        key: 'settings',
-        label: 'Пользовательское',
-        type: 'group',
-        children: [
-            {
-            key: 'user',
-            label: 'Аккаунт',
-            icon: <UserOutlined />,
+            key: 'settings',
+            label: 'Пользовательское',
+            type: 'group',
             children: [
-                { key: 'user_profile', label: <NavLink to="/account/profile">Профиль</NavLink>},
-                { key: 'user_balance', label: <NavLink to="/account/balance">Баланс</NavLink>},
-                { key: 'user_settings', label: <NavLink to="/account/settings">Настройки</NavLink> },
-                { key: 'user_help', label: 'Помощь' },
-            ]
-            },
-        ],
+                {
+                key: 'user',
+                label: 'Аккаунт',
+                icon: <UserOutlined />,
+                children: [
+                    { key: 'user_profile', label: <NavLink to="/account/profile">Профиль</NavLink>},
+                    { key: 'user_balance', label: <NavLink to="/account/balance">Баланс</NavLink>},
+                    { key: 'user_settings', label: <NavLink to="/account/settings">Настройки</NavLink> },
+                    { key: 'user_help', label: 'Помощь' },
+                ]
+                },
+            ],
         },
     ]
     const breadcrumbDummies = {
         "meetings": <NavLink to="/meetings">Встречи</NavLink>,
         "feed": <NavLink to="/feed">Лента</NavLink>,
+        "courses": <Link to="/courses">Потоки</Link>,
         "news": <NavLink to="/news">Новости</NavLink>,
         "account": <NavLink to="/account">Аккаунт</NavLink>,
         "profile": <NavLink to="/account/profile">Профиль</NavLink>,
@@ -131,6 +133,8 @@ const MainLayout = () => {
             setSelectedNav('feed');
         } else if (location.pathname.includes('/news')) {
             setSelectedNav('news')
+        } else if (location.pathname.includes('/courses')) {
+            setSelectedNav('courses');
         } else if (location.pathname.includes('/meetings')) {
             setSelectedNav('meetings');
         } else if (location.pathname.includes('/account/profile')) {

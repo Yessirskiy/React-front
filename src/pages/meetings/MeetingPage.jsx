@@ -253,10 +253,10 @@ const MeetingPage = () => {
                         lg={10} xl={8} xxl={8}
                     >
                         <Card className='h-full'>
-                            <Flex vertical gap="large">
+                            {meeting ? <Flex vertical gap="large">
                                 <Title level={5}>Лента событий</Title>
                                 <Steps current={timelineCur} direction="vertical" items={timeline} />
-                            </Flex>
+                            </Flex> : <Skeleton loading={true} active title={false} paragraph={{rows: 10}}></Skeleton>}
                         </Card>
                     </Col>
                     <Col

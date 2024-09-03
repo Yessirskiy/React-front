@@ -13,6 +13,7 @@ import MeetingPage from './pages/meetings/MeetingPage';
 import LoginPage from './pages/auth/LoginPage';
 import { AuthLayout } from './layouts/AuthLayout';
 import { ProfileProvider } from './hooks/useProfile';
+import CoursesPage from './pages/courses/CoursesPage';
 
 const router = createBrowserRouter([
   {
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
           {
             path: "meetings/:meetingId/",
             element: <MeetingPage/>
+          },
+          {
+            path: "courses/",
+            element: <CoursesPage/>
           }
         ]
       },

@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { List, Card, Select, Flex, Skeleton, Divider, DatePicker } from "antd";
 import { langLevels } from "../profile/forms/UserAdditionalForm";
-import { getMeetingsFeed } from "../../api/meetings";
+import { getCoursesFeed } from "../../api/courses";
 import NotificationContext from "../../context/NotificationContext";
 import useAxios from "../../utils/UseAxios";
 import dayjs from "dayjs";
-import MeetingCard from "../feed/MeetingCard";
 
 const accessability_select_options = [
     {
@@ -20,15 +19,15 @@ const accessability_select_options = [
 
 const { RangePicker } = DatePicker;
 
-const MeetingsLayout = () => {
+const CoursesLayout = () => {
     const api = useAxios();
-    const [meetingsPagination, setMeetingsPagination] = useState({
+    const [coursesPagination, setCoursesPagination] = useState({
         current: 1,
         pageSize: 10,
         total: 0,
     });
-    const [meetings, setMeetings] = useState([]);
-    const [meetingsLoading, setMeetingsLoading] = useState(false);
+    const [courses, setCourses] = useState([]);
+    const [coursesLoading, setCoursesLoading] = useState(false);
     const [accessability, setAccessability] = useState(null);
     const [englishLevel, setEnglishLevel] = useState(null);
     const [startDate, setStartDate] = useState(dayjs());
@@ -36,30 +35,30 @@ const MeetingsLayout = () => {
     const { setNotification } = useContext(NotificationContext);
 
     const getFeed = async (pagination) => {
-        setMeetingsLoading(true);
+        setCoursesLoading(true);
         try {
-            const data = await getMeetingsFeed(
+            const data = await getCoursesFeed(
                 api, pagination.current, pagination.pageSize, 
                 startDate ? startDate.toISOString() : null, 
                 endDate ? endDate.toISOString() : null,
                 englishLevel
             );
-            setMeetings(data.results);
-            setMeetingsPagination({
+            setCourses(data.results);
+            setCoursesPagination({
                 ...pagination,
                 total: data.count,
             })
-            setMeetingsLoading(false);
+            setCoursesLoading(false);
         } catch (error) {
             setNotification({
                 type: "error",
-                content: "Не удалось получить ленту встреч."
+                content: "Не удалось получить потоки."
             });
         }
     };
 
     useEffect(() => {
-        getFeed(meetingsPagination);
+        getFeed(coursesPagination);
     }, [englishLevel, accessability, startDate, endDate]);
 
     const handleCalendarChange = async (dates) => {
@@ -74,7 +73,7 @@ const MeetingsLayout = () => {
         <>
             <Flex wrap gap='large' className="w-full mb-4">
                 <Select 
-                    disabled={meetingsLoading ? true : undefined} 
+                    disabled={coursesLoading ? true : undefined} 
                     variant="filled" 
                     placeholder="Доступность" 
                     allowClear
@@ -84,7 +83,7 @@ const MeetingsLayout = () => {
                     value={accessability}
                 />
                 <Select 
-                    disabled={meetingsLoading ? true : undefined} 
+                    disabled={coursesLoading ? true : undefined} 
                     variant="filled" 
                     placeholder="Уровень английского"
                     allowClear
@@ -94,7 +93,7 @@ const MeetingsLayout = () => {
                     value={englishLevel}
                 />
                 <RangePicker 
-                    disabled={meetingsLoading ? true : undefined}
+                    disabled={coursesLoading ? true : undefined}
                     value={[startDate, endDate]} 
                     variant="filled" 
                     onCalendarChange={handleCalendarChange}    
@@ -111,13 +110,13 @@ const MeetingsLayout = () => {
                     xl: 3,
                     xxl: 3,
                 }}
-                pagination={meetings.length > 0 ? meetingsPagination : false}
-                dataSource={meetingsLoading && meetings.length === 0 ? skeletonItems : meetings}
+                pagination={courses.length > 0 ? coursesPagination : false}
+                dataSource={coursesLoading && courses.length === 0 ? skeletonItems : courses}
                 loading={false}
                 renderItem={(item) => (
-                    !meetingsLoading ? (
+                    !coursesLoading ? (
                         <List.Item>
-                            <MeetingCard data={item}/>
+                            <CourseCard data={item}/>
                         </List.Item>
                     ) : (
                         <List.Item key={item.key}>
@@ -134,4 +133,4 @@ const MeetingsLayout = () => {
     )
 }
 
-export default MeetingsLayout;
+export default CoursesLayout;
