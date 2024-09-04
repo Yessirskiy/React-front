@@ -1,6 +1,6 @@
 const feedURL = 'api/courses/feed/'
 
-export const getCoursesFeed = async (api, page, page_size, period_start, period_end, english_level, min_age) => {
+export const getCoursesFeed = async (api, page, page_size, period_start, period_end, english_level, min_age, location) => {
     try {
         let params = {};
         if (period_start)
@@ -11,6 +11,8 @@ export const getCoursesFeed = async (api, page, page_size, period_start, period_
             params.english_level = english_level;
         if (min_age)
             params.min_age = min_age;
+        if (location)
+            params.location = location;
         const response = await api.get(feedURL, { 
             params: {
                 page: page,
