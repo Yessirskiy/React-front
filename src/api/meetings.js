@@ -34,7 +34,6 @@ export const getMeetingsFeed = async (api, page, page_size, period_start, period
             params.period_end = period_end;
         if (english_level)
             params.english_level = english_level;
-        console.log(params);
         const response = await api.get(feedURL, { 
             params: {
                 page: page,

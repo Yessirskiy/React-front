@@ -26,13 +26,9 @@ const MeetingCard = ({data, loading}) => {
     const { is_online, english_level, min_age } = data;
     const meeting_duration = dayjs.duration(dayjs(meeting_end_date).diff(dayjs(meeting_start_date)));
 
-    const handleClick = async (e) => {
-        console.log(id);
-    }
-
     return (
         <Link state={{name: title}} to={`/meetings/${id}`}>
-            <Card onClick={handleClick} hoverable loading={loading ? true : undefined}>
+            <Card hoverable loading={loading ? true : undefined}>
                 <Flex justify="space-between">
                     <Flex vertical className='mb-2'>
                         <h3 className="m-0">{title}</h3>

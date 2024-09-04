@@ -1,5 +1,3 @@
-import useAxios from "../utils/UseAxios";
-
 const countriesURL = '/api/location/countries/';
 const citiesURL = '/api/location/cities/'
 
