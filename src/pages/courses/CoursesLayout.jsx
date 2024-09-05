@@ -1,24 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { List, Card, Select, Flex, Skeleton, Divider, DatePicker, TreeSelect, Segmented, Drawer, Button, Typography } from "antd";
-import { DesktopOutlined, HomeOutlined, ControlOutlined, ControlFilled } from '@ant-design/icons';
+import { List, Card, Select, Flex, Skeleton, Divider, Button } from "antd";
+import { ControlOutlined } from '@ant-design/icons';
 import CourseCard from "./CourseCard";
-import { langLevels } from "../profile/forms/UserAdditionalForm";
 import NotificationContext from "../../context/NotificationContext";
 import useAxios from "../../utils/UseAxios";
 import { getCoursesFeed } from "../../api/courses";
-import { getCountries, getCityById } from "../../api/location";
 import dayjs from "dayjs";
-
-const accessability_select_options = [
-    {
-        value: "все",
-        label: "Все",
-    },
-    {
-        value: "мне",
-        label: "Доступные"
-    }
-]
+import FilterDrawer from "./FilterDrawer";
 
 const sorting_options = [
     {
@@ -31,8 +19,16 @@ const sorting_options = [
     }
 ]
 
-const { Title } = Typography;
-const { RangePicker } = DatePicker;
+const default_filters = {
+    accessability: null,
+    englishLevels: ["B1"],
+    location: null,
+    startDate: dayjs(),
+    endDate: null,
+    is_online: false,
+    is_offline: true,
+    age: 16
+}
 
 const CoursesLayout = () => {
     const api = useAxios();
@@ -44,25 +40,9 @@ const CoursesLayout = () => {
     const [courses, setCourses] = useState([]);
     const [coursesLoading, setCoursesLoading] = useState(false);
 
-    const [filtersOpen, setFiltersOpen] = useState(false);
-    const [accessability, setAccessability] = useState(null);
-    const [englishLevel, setEnglishLevel] = useState(null);
-    const [startDate, setStartDate] = useState(dayjs());
-    const [endDate, setEndDate] = useState(null);
-    const [age, setAge] = useState(16);
-    const [cities, setCities] = useState({});
-    const [location, setLocation] = useState(null);
+    const [filterOpen, setFilterOpen] = useState(false);
+    const [filters, setFilters] = useState(default_filters);
 
-    const [treeData, setTreeData] = useState([
-        {
-            id: 192,
-            pId: 0,
-            value: "Russia",
-            title: "Russia",
-            isLeaf: false,
-            selectable: false,
-        }
-    ]);
     const { setNotification } = useContext(NotificationContext);
 
     const getFeed = async (pagination) => {
@@ -89,56 +69,9 @@ const CoursesLayout = () => {
         }
     };
 
-    const fetchCities = async (country_id) => {
-        try {
-            const data = await getCityById(api, country_id);
-            const processed = data.map(city => {
-                return {
-                    id: city.id,
-                    pId: country_id,
-                    value: city.name,
-                    title: city.name,
-                    isLeaf: true,
-                };
-            });
-            const citiesMap = data.reduce((acc, city) => {
-                acc[city.name] = city.id; 
-                return acc;
-            }, {});
-    
-            setCities(prevCities => ({
-                ...prevCities,
-                ...citiesMap
-            }));
-            setTreeData(prevTreeData =>
-                prevTreeData.map(item =>
-                    item.id === country_id ? { ...item, children: processed } : item
-                )
-            );
-        } catch (error) {
-            setNotification({
-                type: 'error',
-                content: 'Не удалось получить список городов.',
-            });
-        }
-    };
-
     useEffect(() => {
-        fetchCities(192);
-    }, [])
-
-    useEffect(() => {
-        getFeed(coursesPagination);
-    }, [location, englishLevel, age, accessability, startDate, endDate]);
-
-    const handleCalendarChange = async (dates) => {
-        setStartDate(dates[0] ? dayjs(dates[0]) : null);
-        setEndDate(dates[1] ? dayjs(dates[1]) : null);
-    };
-
-    const handleTreeChange = async (value, label, extra) => {
-        setLocation(value);
-    }
+        console.log(filters);
+    }, [filters]);
 
     const skeletonItems = Array.from({ length: 5 }).map((_, index) => (
         {key: index}
@@ -146,88 +79,19 @@ const CoursesLayout = () => {
     return (
         <>
             <Flex wrap gap='small' className="w-full mb-6">
-                <Button className="h-10" icon={<ControlOutlined/>} onClick={() => (setFiltersOpen(true))} >Фильтры</Button>
+                <Button className="h-10" icon={<ControlOutlined/>} onClick={() => (setFilterOpen(true))} >Фильтры</Button>
                 <Button className="h-10" type="link">Сбросить</Button>
                 <Select 
                     className="h-10 ml-auto" 
                     placeholder="Сортировать по"
                     options={sorting_options}
                 />
-                <Drawer title="Фильтр потоков" onClose={() => (setFiltersOpen(false))} open={filtersOpen}>
-                    <Flex vertical={true} gap="large">
-                        <Flex vertical gap="middle">
-                            <Title className="mb-0" level={5}>Основные</Title>
-                            <Select 
-                                className="h-10 w-full"
-                                disabled={coursesLoading ? true : undefined} 
-                                variant="filled" 
-                                placeholder="Доступность" 
-                                allowClear
-                                options={accessability_select_options} 
-                                onClear={() => setAccessability(null)}
-                                onSelect={(option) => (setAccessability(option))}
-                                value={accessability}
-                            />
-                        </Flex>
-                        <Select
-                            className="h-10"
-                            disabled={coursesLoading ? true: undefined}
-                            allowClear
-                            showSearch
-                            min={0}
-                            max={100}
-                            options={[...Array(100).keys()].map((value, ind) => {
-                                return {value: ind, label: `${ind}+`}
-                            })}
-                            value={age}
-                            variant="filled"
-                            placeholder="Возраст"
-                            onChange={(value) => (setAge(value))}
-                        />
-                        <Select 
-                            className="h-10"
-                            disabled={coursesLoading ? true : undefined} 
-                            variant="filled" 
-                            placeholder="Уровень английского"
-                            allowClear
-                            options={langLevels} 
-                            onClear={() => setEnglishLevel(null)}
-                            onSelect={(option) => (setEnglishLevel(option))}
-                            value={englishLevel}
-                        />
-                        <TreeSelect
-                            className="h-10 w-full"
-                            treeData={treeData}
-                            value={location}
-                            placeholder="Локация"
-                            variant="filled"
-                            dropdownStyle={{
-                                maxHeight: 400,
-                                overflow: 'auto',
-                            }}
-                            treeNodeFilterProp='title'
-                            showSearch
-                            treeDataSimpleMode
-                            allowClear
-                            onChange={handleTreeChange}
-
-                        />
-                        <Segmented 
-                            className="w-min"
-                            options={[
-                                { label: 'Оффлайн', value: true, icon: <HomeOutlined /> },
-                                { label: 'Онлайн', value: false, icon: <DesktopOutlined /> },
-                            ]}
-                        />
-                        <RangePicker 
-                            rootClassName="h-10"
-                            disabled={coursesLoading ? true : undefined}
-                            value={[startDate, endDate]} 
-                            variant="filled" 
-                            onCalendarChange={handleCalendarChange}    
-                        />
-                    </Flex>
-                </Drawer>
+                <FilterDrawer 
+                    filterOpen={filterOpen} 
+                    setFilterOpen={setFilterOpen}
+                    filters={filters}
+                    setFilters={setFilters}
+                />
             </Flex>
             <List
                 className="mb-7"
