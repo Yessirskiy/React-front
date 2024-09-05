@@ -22,6 +22,8 @@ const sorting_options = [
 const default_filters = {
     accessability: null,
     englishLevels: ["B1"],
+    duration_start: 1,
+    duration_end: 4,
     location: null,
     startDate: dayjs(),
     endDate: null,

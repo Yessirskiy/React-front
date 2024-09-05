@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Flex, Divider, Tag, Progress, Typography } from "antd";
+import { Card, Flex, Divider, Tag, Progress, Typography, Tooltip } from "antd";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import duration from 'dayjs/plugin/duration';
@@ -8,9 +8,26 @@ dayjs.extend(duration);
 
 const { Text } = Typography;
 
+const EngLevelToColor = (engLevel) => {
+    if (engLevel === "A1")
+        return "geekblue";
+    else if (engLevel === "A2")
+        return "blue";
+    else if (engLevel === "B1")
+        return "cyan";
+    else if (engLevel === "B2")
+        return "green";
+    else if (engLevel === "C1")
+        return "lime";
+    else if (engLevel === "C2")
+        return "gold";
+    else
+        return "orange";
+}
+
 const CourseCard = ({data}) => {
     const { id, title, description, thumbnail, status, start_time, end_time } = data;
-    const { min_age, is_online, country, city} = data;
+    const { min_age, is_online, country, city, english_level} = data;
     const course_duration = dayjs.duration(dayjs(end_time).diff(dayjs(start_time)));
 
     const getStatusTag = () => {
@@ -41,10 +58,16 @@ const CourseCard = ({data}) => {
                         </Text>
                     </Flex>
                     <Flex wrap gap="4px 0" className='h-fit justify-end'>
-                        {is_online ? <Tag bordered={false}>Онлайн</Tag> : <Tag color="orange" bordered={false}>{city}, {country}</Tag>}
-                        {/* <Tag bordered={false}>{english_level}</Tag> */}
-                        {/* <Tag bordered={false}>{is_online ? 'Онлайн' : 'Оффлайн'}</Tag> */}
-                        <Tag color="volcano" bordered={false}>{min_age}+</Tag>
+                        <Tooltip title={is_online ? "Формат" : "Локация"}>
+                            {is_online ? <Tag bordered={false}>Онлайн</Tag> : <Tag color="orange" bordered={false}>{city}, {country}</Tag>}
+                        </Tooltip>
+                        <Tooltip title="Уровень языка">
+                            <Tag bordered={false} color={EngLevelToColor(english_level)}>{english_level}</Tag>
+                        </Tooltip>
+                        <Tooltip title="Минимальный возраст">
+                            <Tag color="volcano" bordered={false}>{min_age}+</Tag>
+                        </Tooltip>
+                        
                     </Flex>
                 </Flex>
                 <Divider style={{margin: 0}}/>

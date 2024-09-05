@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Drawer, Flex, Checkbox, Typography, DatePicker, TreeSelect, Select} from "antd";
+import { Drawer, Flex, Checkbox, Typography, DatePicker, TreeSelect, Select, Slider} from "antd";
 import { getCityById } from "../../api/location";
 import { langLevels } from "../profile/forms/UserAdditionalForm";
 import NotificationContext from "../../context/NotificationContext";
@@ -19,6 +19,14 @@ const accessability_select_options = [
         label: "Доступные",
     }
 ]
+
+const duration_slider_marks = {
+    1: '1',
+    2: '2',
+    3: '3',
+    4: '4',
+    5: '5',
+}
 
 const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters, setCities}) => {
     const api = useAxios();
@@ -41,13 +49,6 @@ const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters, setCities
             endDate: dates[1] ? dayjs(dates[1]) : null,
         }));
     };
-
-    const handleTreeChange = async (value, label, extra) => {
-        setFilters(prevFilter => ({
-            ...prevFilter,
-            location: value,
-        }));
-    }
 
     const fetchCities = async (country_id) => {
         try {
@@ -101,6 +102,14 @@ const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters, setCities
         }));
     }
 
+    const changeDuration = (values) => {
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            duration_start: values[0],
+            duration_end: values[1],
+        }));
+    }
+
     const changeEnglishLevels = (values) => {
         setFilters(prevFilter => ({
             ...prevFilter,
@@ -121,7 +130,7 @@ const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters, setCities
             is_offline: value.target.checked,
         }));
     }
-    
+
     const changeTree = (value) => {
         setFilters(prevFilter => ({
             ...prevFilter,
@@ -151,6 +160,14 @@ const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters, setCities
                         onCalendarChange={handleCalendarChange}    
                     />
                 </Flex>
+            </Flex>
+            <Flex vertical>
+                <Title level={5}>Продолжительность (в неделях)</Title>
+                <Slider 
+                    min={1} max={5} onChange={changeDuration}
+                    range marks={duration_slider_marks}
+                    value={[filters?.duration_start, filters?.duration_end]}
+                />
             </Flex>
             <Flex vertical>
                 <Title level={5}>Критерии</Title>
