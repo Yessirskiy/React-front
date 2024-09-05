@@ -8,7 +8,7 @@ export const getCoursesFeed = async (api, page, page_size, period_start, period_
         if (period_end)
             params.period_end = period_end;
         if (english_level)
-            params.english_level = english_level;
+            params.english_level = english_level.join(",");
         if (min_age)
             params.min_age = min_age;
         if (location)

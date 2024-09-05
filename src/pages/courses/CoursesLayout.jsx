@@ -42,6 +42,7 @@ const CoursesLayout = () => {
 
     const [filterOpen, setFilterOpen] = useState(false);
     const [filters, setFilters] = useState(default_filters);
+    const [cities, setCities] = useState({});
 
     const { setNotification } = useContext(NotificationContext);
 
@@ -50,9 +51,9 @@ const CoursesLayout = () => {
         try {
             const data = await getCoursesFeed(
                 api, pagination.current, pagination.pageSize, 
-                startDate ? startDate.toISOString() : null, 
-                endDate ? endDate.toISOString() : null,
-                englishLevel, age, cities[location]
+                filters?.startDate ? filters?.startDate.toISOString() : null, 
+                filters?.endDate ? filters?.endDate.toISOString() : null,
+                filters?.englishLevels, filters?.age, cities[filters?.location]
             );
             setCourses(data.results);
             setCoursesPagination({
@@ -70,7 +71,8 @@ const CoursesLayout = () => {
     };
 
     useEffect(() => {
-        console.log(filters);
+        if (filters)
+            getFeed(coursesPagination);
     }, [filters]);
 
     const skeletonItems = Array.from({ length: 5 }).map((_, index) => (
@@ -80,7 +82,7 @@ const CoursesLayout = () => {
         <>
             <Flex wrap gap='small' className="w-full mb-6">
                 <Button className="h-10" icon={<ControlOutlined/>} onClick={() => (setFilterOpen(true))} >Фильтры</Button>
-                <Button className="h-10" type="link">Сбросить</Button>
+                <Button className="h-10" type="link" onClick={() => (setFilters(default_filters))}>Сбросить</Button>
                 <Select 
                     className="h-10 ml-auto" 
                     placeholder="Сортировать по"
@@ -91,6 +93,7 @@ const CoursesLayout = () => {
                     setFilterOpen={setFilterOpen}
                     filters={filters}
                     setFilters={setFilters}
+                    setCities={setCities}
                 />
             </Flex>
             <List

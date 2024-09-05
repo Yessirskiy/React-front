@@ -4,6 +4,7 @@ import { getCityById } from "../../api/location";
 import { langLevels } from "../profile/forms/UserAdditionalForm";
 import NotificationContext from "../../context/NotificationContext";
 import dayjs from "dayjs";
+import useAxios from "../../utils/UseAxios";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -19,7 +20,8 @@ const accessability_select_options = [
     }
 ]
 
-const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters}) => {
+const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters, setCities}) => {
+    const api = useAxios();
     const [treeData, setTreeData] = useState([
         {
             id: 192,
@@ -30,7 +32,6 @@ const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters}) => {
             selectable: false,
         }
     ]);
-    const [cities, setCities] = useState({});
     const { setNotification } = useContext(NotificationContext);
 
     const handleCalendarChange = async (dates) => {
@@ -64,7 +65,6 @@ const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters}) => {
                 acc[city.name] = city.id; 
                 return acc;
             }, {});
-    
             setCities(prevCities => ({
                 ...prevCities,
                 ...citiesMap
@@ -79,6 +79,7 @@ const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters}) => {
                 type: 'error',
                 content: 'Не удалось получить список городов.',
             });
+            console.log(error);
         }
     };
 
@@ -120,19 +121,12 @@ const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters}) => {
             is_offline: value.target.checked,
         }));
     }
-
-    const changeLocation = (value) => {
-        setFilters(prevFilter => ({
-            ...prevFilter,
-            location: cities[value]
-        }));
-    }
-
+    
     const changeTree = (value) => {
         setFilters(prevFilter => ({
-            ...prevFilter
+            ...prevFilter,
+            location: value,
         }));
-        console.log(value);
     }
 
     return <Drawer title="Фильтр потоков" onClose={() => (setFilterOpen(false))} open={filterOpen}>
@@ -140,43 +134,54 @@ const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters}) => {
             <Flex vertical>
                 <Title level={5}>Доступность</Title>
                 <Flex vertical gap="middle">
-                <Select 
-                    className="h-10 w-full"
-                    variant="filled" 
-                    placeholder="Доступность" 
-                    allowClear
-                    options={accessability_select_options} 
-                    onClear={() => setAccessability(null)}
-                    onSelect={(option) => (changeAccess(option))}
-                    value={filters?.accessability}
-                />
+                    <Select 
+                        className="h-10 w-full"
+                        variant="filled" 
+                        placeholder="Доступность" 
+                        allowClear
+                        options={accessability_select_options} 
+                        onClear={() => setAccessability(null)}
+                        onSelect={(option) => (changeAccess(option))}
+                        value={filters?.accessability}
+                    />
+                    <RangePicker 
+                        rootClassName="h-10"
+                        value={[filters?.startDate, filters?.endDate]} 
+                        variant="filled" 
+                        onCalendarChange={handleCalendarChange}    
+                    />
                 </Flex>
             </Flex>
-            <Select
-                className="h-10"
-                allowClear
-                showSearch
-                min={0}
-                max={100}
-                options={[...Array(100).keys()].map((value, ind) => {
-                    return {value: ind, label: `${ind}+`}
-                })}
-                value={filters?.age}
-                variant="filled"
-                placeholder="Возраст"
-                onChange={(value) => (changeAge(value))}
-            />
-            <Select 
-                className="h-10"
-                variant="filled" 
-                mode="multiple"
-                placeholder="Уровень английского"
-                allowClear
-                options={langLevels} 
-                onClear={() => changeEnglishLevels([])}
-                onChange={(values) => (changeEnglishLevels(values))}
-                value={filters?.englishLevels}
-            />
+            <Flex vertical>
+                <Title level={5}>Критерии</Title>
+                <Flex vertical gap="middle">
+                    <Select
+                        className="h-10"
+                        allowClear
+                        showSearch
+                        min={0}
+                        max={100}
+                        options={[...Array(100).keys()].map((value, ind) => {
+                            return {value: ind, label: `${ind}+`}
+                        })}
+                        value={filters?.age}
+                        variant="filled"
+                        placeholder="Возраст"
+                        onChange={(value) => (changeAge(value))}
+                    />
+                    <Select 
+                        className="h-10"
+                        variant="filled" 
+                        mode="multiple"
+                        placeholder="Уровень английского"
+                        allowClear
+                        options={langLevels} 
+                        onClear={() => changeEnglishLevels([])}
+                        onChange={(values) => (changeEnglishLevels(values))}
+                        value={filters?.englishLevels}
+                    />
+                </Flex>
+            </Flex>
             <Flex vertical>
                 <Title level={5}>Локация</Title>
                 <Flex vertical gap="middle">
@@ -206,13 +211,6 @@ const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters}) => {
                     />}
                 </Flex>
             </Flex>
-            
-            <RangePicker 
-                rootClassName="h-10"
-                value={[filters?.startDate, filters?.endDate]} 
-                variant="filled" 
-                onCalendarChange={handleCalendarChange}    
-            />
         </Flex>
     </Drawer>
 }
