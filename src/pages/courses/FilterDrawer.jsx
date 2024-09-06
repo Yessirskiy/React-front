@@ -200,7 +200,7 @@ const FilterDrawer = ({filterOpen, setFilterOpen, filters, setFilters, setCities
                 </Flex>
             </Flex>
             <Flex vertical>
-                <Title level={5}>Локация</Title>
+                <Title level={5}>Формат</Title>
                 <Flex vertical gap="middle">
                     <Flex gap="small">
                     <Checkbox 

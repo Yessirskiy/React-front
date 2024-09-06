@@ -51,11 +51,27 @@ const CoursesLayout = () => {
     const getFeed = async (pagination) => {
         setCoursesLoading(true);
         try {
+            let params = {};
+            if (filters?.startDate)
+                params.period_start = filters.startDate.toISOString();
+            if (filters?.endDate)
+                params.period_end = filters.endDate.toISOString();
+            if (filters?.englishLevels)
+                params.english_level = filters.englishLevels.join(",");
+            if (filters?.age)
+                params.min_age = filters.age;
+            if (filters?.is_offline && filters?.location)
+                params.location = cities[filters.location];
+            if (filters?.duration_start)
+                params.duration_start = filters.duration_start;
+            if (filters?.duration_end)
+                params.duration_end = filters.duration_end;
+            if (filters?.is_offline && !filters?.is_online)
+                params.is_online = false;
+            else if (!filters?.is_offline && filters?.is_online)
+                params.is_online = true;
             const data = await getCoursesFeed(
-                api, pagination.current, pagination.pageSize, 
-                filters?.startDate ? filters?.startDate.toISOString() : null, 
-                filters?.endDate ? filters?.endDate.toISOString() : null,
-                filters?.englishLevels, filters?.age, cities[filters?.location]
+                api, pagination.current, pagination.pageSize, params
             );
             setCourses(data.results);
             setCoursesPagination({
