@@ -41,9 +41,9 @@ const MainLayout = () => {
             colorBgLayout: isDarkMode ? '#31363F' : '#f5f5f5',
             colorTextBase: isDarkMode ? '#EEEEEE' : '#000000',
             colorBgContainer: isDarkMode ? '#222831' : '#ffffff',
-            borderRadiusSM: 4,
-            borderRadius: 6,
-            borderRadiusLG: 8,
+            borderRadiusSM: 8,//4,
+            borderRadius: 10,//6,
+            borderRadiusLG: 12//8,
         },
     };
 
