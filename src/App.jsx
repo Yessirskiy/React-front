@@ -14,6 +14,7 @@ import LoginPage from './pages/auth/LoginPage';
 import { AuthLayout } from './layouts/AuthLayout';
 import { ProfileProvider } from './hooks/useProfile';
 import CoursesPage from './pages/courses/CoursesPage';
+import CoursePage from './pages/courses/CoursePage';
 
 const router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
           {
             path: "courses/",
             element: <CoursesPage/>
+          },
+          {
+            path: "courses/:courseId/",
+            element: <CoursePage/>
           }
         ]
       },

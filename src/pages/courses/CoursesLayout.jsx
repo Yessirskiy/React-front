@@ -80,7 +80,6 @@ const CoursesLayout = () => {
             })
             setCoursesLoading(false);
         } catch (error) {
-            console.log(error);
             setNotification({
                 type: "error",
                 content: "Не удалось получить потоки."
@@ -94,7 +93,7 @@ const CoursesLayout = () => {
     }, [filters]);
 
     const skeletonItems = Array.from({ length: 5 }).map((_, index) => (
-        {key: index}
+        {id: index}
     ));
     return (
         <>
@@ -130,11 +129,11 @@ const CoursesLayout = () => {
                 loading={false}
                 renderItem={(item) => (
                     !coursesLoading ? (
-                        <List.Item>
+                        <List.Item key={item.id}>
                             <CourseCard data={item}/>
                         </List.Item>
                     ) : (
-                        <List.Item key={item.key}>
+                        <List.Item key={item.id}>
                             <Card hoverable>
                                 <Skeleton className="mb-0" active title paragraph={{ rows: 0 }} />
                                 <Divider className="my-0 mb-5"/>

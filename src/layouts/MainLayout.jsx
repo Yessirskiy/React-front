@@ -114,7 +114,10 @@ const MainLayout = () => {
         for (let nav of navs){
             result.push({title: breadcrumbDummies[nav]})
         }
-        if (/^\/news\/\d+$/.test(location.pathname) || /^\/meetings\/\d+$/.test(location.pathname)){
+        if (/^\/news\/\d+$/.test(location.pathname) 
+            || /^\/meetings\/\d+$/.test(location.pathname)
+            || /^\/courses\/\d+$/.test(location.pathname)
+        ){
             result.pop()
             if (location.state?.name)
                 result.push({title:<Link state={{name: location.state.name}} to={location.pathname}>{location.state.name}</Link>})

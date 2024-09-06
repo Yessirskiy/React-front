@@ -40,7 +40,7 @@ const MeetingPage = () => {
         } catch (error) {
             setNotification({
                 type: "error",
-                content: "Не удалось получить встречу."
+                content: "Не удалось получить информацию о встрече."
             });
         }
     }
@@ -54,7 +54,7 @@ const MeetingPage = () => {
         } catch (error) {
             setNotification({
                 type: "error",
-                content: "Не удалось получить ленту событий."
+                content: "Не удалось получить ленту событий встречи."
             });
         }
     }

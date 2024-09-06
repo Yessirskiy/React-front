@@ -45,7 +45,7 @@ const CourseCard = ({data}) => {
     }
 
     return (
-        <Link state={{name: title}} to={`/meetings/${id}`}>
+        <Link state={{name: title}} to={`/courses/${id}`}>
             <Card hoverable cover={<img src={thumbnail}/>}>
                 <Flex justify="space-between">
                     <Flex vertical className='mb-2'>

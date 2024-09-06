@@ -68,7 +68,7 @@ const MeetingsLayout = () => {
     };
 
     const skeletonItems = Array.from({ length: 5 }).map((_, index) => (
-        {key: index}
+        {id: index}
     ));
     return (
         <>
@@ -116,11 +116,11 @@ const MeetingsLayout = () => {
                 loading={false}
                 renderItem={(item) => (
                     !meetingsLoading ? (
-                        <List.Item>
+                        <List.Item key={item.id}>
                             <MeetingCard data={item}/>
                         </List.Item>
                     ) : (
-                        <List.Item key={item.key}>
+                        <List.Item key={item.id}>
                             <Card hoverable>
                                 <Skeleton className="mb-0" active title paragraph={{ rows: 0 }} />
                                 <Divider className="my-0 mb-5"/>
