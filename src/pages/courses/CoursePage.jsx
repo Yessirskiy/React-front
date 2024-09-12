@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import NotificationContext from "../../context/NotificationContext";
 import { StarOutlined, TeamOutlined, ReadOutlined, ProfileOutlined } from '@ant-design/icons';
 import { Row, Col, Card, Typography, Statistic, Image, Flex, Space, Button } from "antd";
-import { Skeleton, Divider } from "antd";
+import { Skeleton, Divider, Descriptions, Progress } from "antd";
 import duration from 'dayjs/plugin/duration';
 import { formatPrice } from "../../utils/priceFormatting";
 import 'dayjs/locale/ru'
@@ -42,6 +42,24 @@ const CoursePage = () => {
         retrieveCourse();
     }, []);
 
+    const description_items = [
+        {
+            key: 'participants',
+            label: 'Всего участников',
+            children: '52',
+        },
+        {
+            key: 'applications',
+            label: 'Заявок получено',
+            children: "47/180",
+        },
+        {
+            key: 'location',
+            label: 'Локация',
+            children: `${course?.city}, ${course?.country}`,
+        },
+    ]
+
     return (
     <Row gutter={[28, 28]} justify="center">
         <Col
@@ -55,8 +73,17 @@ const CoursePage = () => {
                     xs={12} sm={16} md={16}
                     lg={16} xl={16}
                 >
-                    <Title level={2}>{course?.title}</Title>
-                    <Text className="text-xl">{course?.description}</Text>
+                    <Flex vertical gap="large">
+                        <Card>
+                        <Flex vertical>
+                            <Title level={2}>{course?.title}</Title>
+                            <Text className="text-xl">{course?.description}</Text>
+                            <Descriptions className="mt-3" items={description_items} />
+                            <Progress className="mt-3" percent={26} format={() => ''} type="line"/>
+                        </Flex>
+                        </Card>
+                    </Flex>
+                    
                 </Col>
                 <Col
                     className='gutter-row'
